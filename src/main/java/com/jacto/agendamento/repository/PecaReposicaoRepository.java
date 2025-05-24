@@ -1,0 +1,9 @@
+package com.jacto.agendamento.repository;
+
+import com.jacto.agendamento.entity.PecaReposicao;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface PecaReposicaoRepository extends JpaRepository<PecaReposicao, Integer> {
+}
