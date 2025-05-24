@@ -2,6 +2,8 @@ package com.jacto.agendamento.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Column;
 import java.util.Date;
@@ -26,11 +28,9 @@ public class Cliente {
     @Column(name = "matricula")
     private Long matricula;
 
-    @Column(name = "nome", length = 250)
-    private String nome;
-
-    @Column(name = "cpf_cnpj", length = 50)
-    private String cpfCnpj;
+    @OneToOne
+    @JoinColumn(name = "cpf_cnpj_pessoa", referencedColumnName = "cpf_cnpj")
+    private Pessoa pessoa;
 
     @Column(name = "data_hora_cadastro")
     private Date dataHoraCadastro;

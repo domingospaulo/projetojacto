@@ -31,9 +31,19 @@ public class Usuario {
     @Column(name = "senha", length = 250)
     private String senha;
 
-    // relação com Perfil via id_perfil
+    // relacionamento com Funcionario
     @ManyToOne
-    @JoinColumn(name = "id_perfil", referencedColumnName = "codigo")
+    @JoinColumn(name = "matricula_funcionario", referencedColumnName = "matricula")
+    private Funcionario funcionario;
+
+    // relacionamento com Cliente
+    @ManyToOne
+    @JoinColumn(name = "matricula_cliente", referencedColumnName = "matricula")
+    private Cliente cliente;
+
+    // relação com Perfil via codigo_perfil
+    @ManyToOne
+    @JoinColumn(name = "codigo_perfil", referencedColumnName = "codigo")
     private Perfil perfil;
 
     @Column(name = "data_hora_cadastro")
