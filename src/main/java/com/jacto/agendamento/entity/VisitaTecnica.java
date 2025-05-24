@@ -11,7 +11,7 @@ import java.util.Date;
 
 @Getter
 @Setter
-@ToString(exclude = {"usuario", "funcionario", "fazenda", "tipoServico", "prioridade", "statusVisita", "ocorrencia", "visitaRef"})
+@ToString(exclude = {"funcionario", "fazenda", "tipoServico", "prioridade", "statusVisita", "ocorrencia", "visitaRef"})
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,10 +25,6 @@ public class VisitaTecnica {
     private Long id;
 
     // relacionamentos 1:N
-    @ManyToOne
-    @JoinColumn(name = "login_usuario", referencedColumnName = "login")
-    private Usuario usuario;
-
     @ManyToOne
     @JoinColumn(name = "matricula_funcionario", referencedColumnName = "matricula")
     private Funcionario funcionario;
