@@ -1,0 +1,44 @@
+package com.jacto.agendamento.entity;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
+import java.util.Date;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "funcionario")
+public class Funcionario {
+
+    @Id
+    @Column(name = "matricula")
+    private Long matricula;
+
+    @Column(name = "nome", length = 250)
+    private String nome;
+
+    // relação com Cargo via id_cargo
+    @ManyToOne
+    @JoinColumn(name = "id_cargo", referencedColumnName = "codigo")
+    private Cargo cargo;
+
+    @Column(name = "data_hora_cadastro")
+    private Date dataHoraCadastro;
+
+    @Column(name = "ativo")
+    private Boolean ativo;
+}
