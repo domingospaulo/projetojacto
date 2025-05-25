@@ -7,7 +7,6 @@ import lombok.ToString;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-
 import java.util.Date;
 
 @Getter
@@ -35,8 +34,9 @@ public class HistoricoAgendamentoVisitaTecnica {
     @JoinColumn(name = "codigo_operacao", referencedColumnName = "codigo")
     private Operacao operacao;
 
-    @Column(name = "login_usuario", length = 50)
-    private String loginUsuario;
+    @ManyToOne
+    @JoinColumn(name = "login_usuario", referencedColumnName = "login")
+    private Usuario usuario;
 
     @Column(name = "data_hora_operacao")
     private Date dataHoraOperacao;

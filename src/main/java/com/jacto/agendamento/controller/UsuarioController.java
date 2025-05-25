@@ -58,7 +58,7 @@ public class UsuarioController {
 
     // Criar novo usuário
     @PostMapping
-    public ResponseEntity<UsuarioDTO> criar(@Valid @RequestBody UsuarioDTO dto) {
+    public ResponseEntity<UsuarioDTO> salvar(@Valid @RequestBody UsuarioDTO dto) {
          // Verifica se pelo menos um relacionamentos foi informado
         if (dto.getMatriculaFuncionario() == null && dto.getMatriculaCliente() == null) {
             throw new IllegalArgumentException("É obrigatório informar matricula do cliente ou do funcionário");

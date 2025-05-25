@@ -44,6 +44,18 @@ public class AvaliacaoAtendimentoController {
         AvaliacaoAtendimento entity = convertToEntity(dto);
         AvaliacaoAtendimento salvo = service.salvar(entity);
         return ResponseEntity.ok(convertToDto(salvo));
+        }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<AvaliacaoAtendimentoDTO> atualizar(@PathVariable Long id, @Valid @RequestBody AvaliacaoAtendimentoDTO dto) {
+        return service.buscarPorId(id)
+            .map(existing -> {
+                AvaliacaoAtendimento entity = convertToEntity(dto);
+                entity.setId(existing.getId());
+                AvaliacaoAtendimento salvo = service.salvar(entity);
+                return ResponseEntity.ok(convertToDto(salvo));
+            })
+            .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")

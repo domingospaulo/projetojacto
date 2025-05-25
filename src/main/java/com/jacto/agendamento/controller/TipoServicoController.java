@@ -20,17 +20,6 @@ public class TipoServicoController {
     @Autowired
     private TipoServicoService service;
 
-    private TipoServicoDTO convertToDto(TipoServico entity) {
-        return new TipoServicoDTO(entity.getCodigo(), entity.getDescricao());
-    }
-
-    private TipoServico convertToEntity(TipoServicoDTO dto) {
-        TipoServico entity = new TipoServico();
-        entity.setCodigo(dto.getCodigo());
-        entity.setDescricao(dto.getDescricao());
-        return entity;
-    }
-
     @GetMapping
     public List<TipoServicoDTO> listarTodos() {
         return service.listarTodos()
@@ -71,4 +60,16 @@ public class TipoServicoController {
         }
         return ResponseEntity.notFound().build();
     }
+
+    private TipoServicoDTO convertToDto(TipoServico entity) {
+        return new TipoServicoDTO(entity.getCodigo(), entity.getDescricao());
+    }
+
+    private TipoServico convertToEntity(TipoServicoDTO dto) {
+        TipoServico entity = new TipoServico();
+        entity.setCodigo(dto.getCodigo());
+        entity.setDescricao(dto.getDescricao());
+        return entity;
+    }
+
 }

@@ -20,19 +20,6 @@ public class PecaReposicaoController {
     @Autowired
     private PecaReposicaoService service;
 
-    // Converter entidade para DTO
-    private PecaReposicaoDTO convertToDto(PecaReposicao entity) {
-        return new PecaReposicaoDTO(entity.getCodigo(), entity.getDescricao());
-    }
-
-    // Converter DTO para entidade
-    private PecaReposicao convertToEntity(PecaReposicaoDTO dto) {
-        PecaReposicao entity = new PecaReposicao();
-        entity.setCodigo(dto.getCodigo());
-        entity.setDescricao(dto.getDescricao());
-        return entity;
-    }
-
     @GetMapping
     public List<PecaReposicaoDTO> listarTodos() {
         return service.listarTodos()
@@ -74,4 +61,18 @@ public class PecaReposicaoController {
         }
         return ResponseEntity.notFound().build();
     }
+
+    // Converter entidade para DTO
+    private PecaReposicaoDTO convertToDto(PecaReposicao entity) {
+        return new PecaReposicaoDTO(entity.getCodigo(), entity.getDescricao());
+    }
+
+    // Converter DTO para entidade
+    private PecaReposicao convertToEntity(PecaReposicaoDTO dto) {
+        PecaReposicao entity = new PecaReposicao();
+        entity.setCodigo(dto.getCodigo());
+        entity.setDescricao(dto.getDescricao());
+        return entity;
+    }
+
 }

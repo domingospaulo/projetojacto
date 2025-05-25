@@ -20,17 +20,6 @@ public class StatusVisitaController {
     @Autowired
     private StatusVisitaService service;
 
-    private StatusVisitaDTO convertToDto(StatusVisita entity) {
-        return new StatusVisitaDTO(entity.getCodigo(), entity.getDescricao());
-    }
-
-    private StatusVisita convertToEntity(StatusVisitaDTO dto) {
-        StatusVisita entity = new StatusVisita();
-        entity.setCodigo(dto.getCodigo());
-        entity.setDescricao(dto.getDescricao());
-        return entity;
-    }
-
     @GetMapping
     public List<StatusVisitaDTO> listarTodos() {
         return service.listarTodos()
@@ -71,5 +60,16 @@ public class StatusVisitaController {
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.notFound().build();
+    }
+
+    private StatusVisitaDTO convertToDto(StatusVisita entity) {
+        return new StatusVisitaDTO(entity.getCodigo(), entity.getDescricao());
+    }
+
+    private StatusVisita convertToEntity(StatusVisitaDTO dto) {
+        StatusVisita entity = new StatusVisita();
+        entity.setCodigo(dto.getCodigo());
+        entity.setDescricao(dto.getDescricao());
+        return entity;
     }
 }

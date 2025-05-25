@@ -20,19 +20,6 @@ public class CargoController {
     @Autowired
     private CargoService service;
 
-    // Converte entidade p/ DTO
-    private CargoDTO convertToDto(Cargo entity) {
-        return new CargoDTO(entity.getCodigo(), entity.getDescricao());
-    }
-
-    // Converte DTO p/ entidade
-    private Cargo convertToEntity(CargoDTO dto) {
-        Cargo entity = new Cargo();
-        entity.setCodigo(dto.getCodigo());
-        entity.setDescricao(dto.getDescricao());
-        return entity;
-    }
-
     @GetMapping
     public List<CargoDTO> listarTodos() {
         return service.listarTodos()
@@ -74,4 +61,18 @@ public class CargoController {
         }
         return ResponseEntity.notFound().build();
     }
+
+    // Converte entidade p/ DTO
+    private CargoDTO convertToDto(Cargo entity) {
+        return new CargoDTO(entity.getCodigo(), entity.getDescricao());
+    }
+
+    // Converte DTO p/ entidade
+    private Cargo convertToEntity(CargoDTO dto) {
+        Cargo entity = new Cargo();
+        entity.setCodigo(dto.getCodigo());
+        entity.setDescricao(dto.getDescricao());
+        return entity;
+    }
+
 }

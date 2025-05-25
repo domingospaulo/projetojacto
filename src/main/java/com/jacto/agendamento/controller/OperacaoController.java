@@ -20,19 +20,6 @@ public class OperacaoController {
     @Autowired
     private OperacaoService service;
 
-    // Converter entidade para DTO
-    private OperacaoDTO convertToDto(Operacao entity) {
-        return new OperacaoDTO(entity.getCodigo(), entity.getDescricao());
-    }
-
-    // Converter DTO para entidade
-    private Operacao convertToEntity(OperacaoDTO dto) {
-        Operacao entity = new Operacao();
-        entity.setCodigo(dto.getCodigo());
-        entity.setDescricao(dto.getDescricao());
-        return entity;
-    }
-
     @GetMapping
     public List<OperacaoDTO> listarTodos() {
         return service.listarTodos()
@@ -74,4 +61,18 @@ public class OperacaoController {
         }
         return ResponseEntity.notFound().build();
     }
+
+    // Converter entidade para DTO
+    private OperacaoDTO convertToDto(Operacao entity) {
+        return new OperacaoDTO(entity.getCodigo(), entity.getDescricao());
+    }
+
+    // Converter DTO para entidade
+    private Operacao convertToEntity(OperacaoDTO dto) {
+        Operacao entity = new Operacao();
+        entity.setCodigo(dto.getCodigo());
+        entity.setDescricao(dto.getDescricao());
+        return entity;
+    }
+
 }

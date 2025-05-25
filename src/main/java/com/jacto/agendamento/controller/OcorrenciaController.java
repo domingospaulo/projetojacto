@@ -20,19 +20,6 @@ public class OcorrenciaController {
     @Autowired
     private OcorrenciaService service;
 
-    // Converter entidade para DTO
-    private OcorrenciaDTO convertToDto(Ocorrencia entity) {
-        return new OcorrenciaDTO(entity.getCodigo(), entity.getDescricao());
-    }
-
-    // Converter DTO para entidade
-    private Ocorrencia convertToEntity(OcorrenciaDTO dto) {
-        Ocorrencia entity = new Ocorrencia();
-        entity.setCodigo(dto.getCodigo());
-        entity.setDescricao(dto.getDescricao());
-        return entity;
-    }
-
     @GetMapping
     public List<OcorrenciaDTO> listarTodos() {
         return service.listarTodos()
@@ -74,4 +61,18 @@ public class OcorrenciaController {
         }
         return ResponseEntity.notFound().build();
     }
+
+    // Converter entidade para DTO
+    private OcorrenciaDTO convertToDto(Ocorrencia entity) {
+        return new OcorrenciaDTO(entity.getCodigo(), entity.getDescricao());
+    }
+
+    // Converter DTO para entidade
+    private Ocorrencia convertToEntity(OcorrenciaDTO dto) {
+        Ocorrencia entity = new Ocorrencia();
+        entity.setCodigo(dto.getCodigo());
+        entity.setDescricao(dto.getDescricao());
+        return entity;
+    }
+
 }

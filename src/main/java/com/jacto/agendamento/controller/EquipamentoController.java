@@ -20,19 +20,6 @@ public class EquipamentoController {
     @Autowired
     private EquipamentoService service;
 
-    // Converte entidade para DTO
-    private EquipamentoDTO convertToDto(Equipamento entity) {
-        return new EquipamentoDTO(entity.getCodigo(), entity.getDescricao());
-    }
-
-    // Converte DTO para entidade
-    private Equipamento convertToEntity(EquipamentoDTO dto) {
-        Equipamento entity = new Equipamento();
-        entity.setCodigo(dto.getCodigo());
-        entity.setDescricao(dto.getDescricao());
-        return entity;
-    }
-
     @GetMapping
     public List<EquipamentoDTO> listarTodos() {
         return service.listarTodos()
@@ -74,4 +61,18 @@ public class EquipamentoController {
         }
         return ResponseEntity.notFound().build();
     }
+
+    // Converte entidade para DTO
+    private EquipamentoDTO convertToDto(Equipamento entity) {
+        return new EquipamentoDTO(entity.getCodigo(), entity.getDescricao());
+    }
+
+    // Converte DTO para entidade
+    private Equipamento convertToEntity(EquipamentoDTO dto) {
+        Equipamento entity = new Equipamento();
+        entity.setCodigo(dto.getCodigo());
+        entity.setDescricao(dto.getDescricao());
+        return entity;
+    }
+
 }

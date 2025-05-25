@@ -39,14 +39,14 @@ public class ClienteController {
     }
 
     @PostMapping
-    public ClienteDTO adicionarCliente(@Valid @RequestBody ClienteDTO clienteDTO) {
+    public ClienteDTO salvar(@Valid @RequestBody ClienteDTO clienteDTO) {
         Cliente cliente = convertToEntity(clienteDTO);
         Cliente salvo = clienteService.salvar(cliente);
         return convertToDto(salvo);
     }
 
     @PutMapping("/{matricula}")
-    public ResponseEntity<ClienteDTO> atualizarCliente(@PathVariable Long matricula, @Valid @RequestBody ClienteDTO clienteDTO) {
+    public ResponseEntity<ClienteDTO> atualizar(@PathVariable Long matricula, @Valid @RequestBody ClienteDTO clienteDTO) {
         return clienteService.buscarPorMatricula(matricula)
                 .map(c -> {
                     Cliente cliente = convertToEntity(clienteDTO);
@@ -56,7 +56,7 @@ public class ClienteController {
     }
 
     @DeleteMapping("/{matricula}")
-    public ResponseEntity<Void> deletarCliente(@PathVariable Long matricula) {
+    public ResponseEntity<Void> deletar(@PathVariable Long matricula) {
         if (clienteService.buscarPorMatricula(matricula).isPresent()) {
             clienteService.deletar(matricula);
             return ResponseEntity.ok().build();
