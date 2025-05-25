@@ -29,7 +29,7 @@ public class UsuarioController {
     @Autowired
     private ClienteService clienteService;
 
-    // 1) Listar todos
+    // Listar todos
     @GetMapping
     public List<UsuarioDTO> listarTodos() {
         return service.listarTodos()
@@ -38,7 +38,7 @@ public class UsuarioController {
             .collect(Collectors.toList());
     }
 
-    // 2) Buscar por login
+    // Buscar por login
     @GetMapping("/{login}")
     public ResponseEntity<UsuarioDTO> buscarPorLogin(@PathVariable String login) {
         return service.buscarPorLogin(login)
@@ -47,7 +47,7 @@ public class UsuarioController {
             .orElse(ResponseEntity.notFound().build());
     }
 
-    // 3) Buscar por perfil
+    // Buscar por perfil
     @GetMapping("/perfil/{codigoPerfil}")
     public List<UsuarioDTO> buscarPorPerfil(@PathVariable Integer codigoPerfil) {
         return service.buscarPorPerfilCodigo(codigoPerfil)
@@ -56,7 +56,7 @@ public class UsuarioController {
             .collect(Collectors.toList());
     }
 
-    // 4) Criar novo usuário
+    // Criar novo usuário
     @PostMapping
     public ResponseEntity<UsuarioDTO> criar(@Valid @RequestBody UsuarioDTO dto) {
          // Verifica se pelo menos um relacionamentos foi informado
