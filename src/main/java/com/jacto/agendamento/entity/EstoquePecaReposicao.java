@@ -33,4 +33,10 @@ public class EstoquePecaReposicao {
 
     @Column(name = "valor")
     private Double valor;
+
+    public EstoquePecaReposicao(PecaReposicao pecaReposicao, Integer quantidade, Double valor) {
+        this.pecaReposicao = pecaReposicao;
+        this.quantidade = quantidade;
+        this.valor = valor;
+    }
 }

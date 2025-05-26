@@ -48,7 +48,7 @@ public class PessoaController {
             .map(p -> {
                 p.setNome(dto.getNome());
                 p.setEmail(dto.getEmail());
-                p.setTelefone(Long.parseLong(dto.getTelefone()));
+                p.setTelefone(dto.getTelefone());
                 Pessoa atualizado = service.salvar(p);
                 return ResponseEntity.ok(convertToDto(atualizado));
             })
@@ -79,7 +79,7 @@ public class PessoaController {
         entity.setCpfCnpj(dto.getCpfCnpj());
         entity.setNome(dto.getNome());
         entity.setEmail(dto.getEmail());
-        entity.setTelefone(dto.getTelefone() != null ? Long.parseLong(dto.getTelefone()) : null);
+        entity.setTelefone(dto.getTelefone() != null ? dto.getTelefone(): null);
         return entity;
     }
 

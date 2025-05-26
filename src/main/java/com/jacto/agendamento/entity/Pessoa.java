@@ -30,5 +30,5 @@ public class Pessoa {
     private String email;
 
     @Column(name = "telefone")
-    private Long telefone;
+    private String telefone;
 }

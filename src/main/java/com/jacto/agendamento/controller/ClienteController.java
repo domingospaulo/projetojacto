@@ -91,7 +91,7 @@ public class ClienteController {
         }
 
         pessoa.setEmail(dto.getEmail());
-        pessoa.setTelefone(Long.parseLong(dto.getTelefone()));
+        pessoa.setTelefone(dto.getTelefone());
         pessoa.setNome(dto.getNome());
         cliente.setPessoa(pessoa);
 

@@ -30,4 +30,9 @@ public class EstoqueEquipamento {
 
     @Column(name = "quantidade")
     private Integer quantidade;
+
+    public EstoqueEquipamento(Equipamento equipamento, Integer quantidade) {
+        this.equipamento = equipamento;
+        this.quantidade = quantidade;
+    }
 }
