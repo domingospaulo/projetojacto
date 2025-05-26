@@ -1,6 +1,5 @@
 package com.jacto.agendamento.controller;
 
-import com.jacto.agendamento.dto.CoordenadasDTO;
 import com.jacto.agendamento.dto.FazendaDTO;
 import com.jacto.agendamento.entity.Fazenda;
 import com.jacto.agendamento.entity.Cliente;
@@ -8,7 +7,6 @@ import com.jacto.agendamento.service.FazendaService;
 import com.jacto.agendamento.service.ClienteService;
 
 import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.http.ResponseEntity;
@@ -24,9 +22,6 @@ import java.util.Optional;
 @RequestMapping("/api/fazendas")
 @DependsOn("jtsConfig") // Garante que o bean jtsConfig seja inicializado primeiro
 public class FazendaController {
-
-    @Autowired
-    private GeometryFactory factory; 
 
     @Autowired
     private FazendaService service;
