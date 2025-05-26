@@ -1,3 +1,4 @@
+version: '3.8'
 services:
   postgres:
     image: 'postgres:latest'
@@ -7,3 +8,28 @@ services:
       - 'POSTGRES_USER=admin'
     ports:
       - '5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d agendamento"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      db_url_agendamento: jdbc:postgresql://postgres:5432/agendamento
+      agendamento_username: admin
+      agendamento_password: "Admin123#"
+      APP_DATABASE_SHOW_SQL: "true"
+      restart: always # garante reinício automático se o container parar
+      command: java -jar /app.jar
+      
+volumes:
+  postgres_data:

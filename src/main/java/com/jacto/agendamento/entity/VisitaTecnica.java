@@ -24,7 +24,7 @@ public class VisitaTecnica {
     @Column(name = "id")
     private Long id;
 
-    // relacionamentos 1:N matricula_funcionario, id_fazenda, id_tipo_servico, id_prioridade, id_status_visita, codigo_ocorrencia
+    // relacionamentos 1:N 
     @ManyToOne
     @JoinColumn(name = "matricula_funcionario", referencedColumnName = "matricula")
     private Funcionario funcionario;
