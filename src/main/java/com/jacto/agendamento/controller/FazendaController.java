@@ -5,8 +5,6 @@ import com.jacto.agendamento.entity.Fazenda;
 import com.jacto.agendamento.entity.Cliente;
 import com.jacto.agendamento.service.FazendaService;
 import com.jacto.agendamento.service.ClienteService;
-
-import org.locationtech.jts.geom.GeometryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.http.ResponseEntity;

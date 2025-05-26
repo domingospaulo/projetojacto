@@ -3,7 +3,6 @@ package com.jacto.agendamento.entity;
 import java.util.Date;
 
 import javax.persistence.*;
-import org.locationtech.jts.geom.Point;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
