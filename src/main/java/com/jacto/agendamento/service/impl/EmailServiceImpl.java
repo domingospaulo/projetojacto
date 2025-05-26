@@ -16,8 +16,9 @@ public class EmailServiceImpl  implements EmailService {
 
     private static final Logger logger = LoggerFactory.getLogger(EmailServiceImpl.class);
 
-    // Injeta as propriedades do application.properties (ou variáveis de ambiente)
     // @Value("${spring.mail.username}")
+    //Remetente esta fixo por erro na leitura da variavel de ambiente
+    //TODO: Corrigir leitura da variavel de ambiente
     private String remetente = "domingos.paul@gmail.com";
 
     public void enviarEmail(String para, String assunto, String texto) {

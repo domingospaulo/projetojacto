@@ -6,7 +6,7 @@ services:
       - 'POSTGRES_DB=agendamento'
       - 'POSTGRES_PASSWORD=Admin123#'
       - 'POSTGRES_USER=admin'
-      - 'PGHOST=0.0.0.0'  
+      - 'PGHOST=0.0.0.0'
     ports:
       - "5432:5432"
     volumes:
@@ -22,21 +22,18 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - postgres  # Formato simplificado: apenas o nome do serviço
+      postgres:
+        condition: service_healthy
+    restart: always
+    command: java -jar /app.jar
+    # Não precisa mais das variáveis de ambiente para o banco de dados
+    # pois elas estão configuradas diretamente no application.properties
     environment:
-      db_url_agendamento: jdbc:postgresql://postgres:5432/agendamento
-      agendamento_username: admin
-      agendamento_password: "Admin123#"
-      APP_DATABASE_SHOW_SQL: "true"
-      APP_DATABASE_HIBERNATE_DDL_AUTO: "create"
       # Configurações do mailtrap para o Spring Boot
       SPRING_MAIL_HOST: sandbox.smtp.mailtrap.io
       SPRING_MAIL_PORT: 587
       SPRING_MAIL_USERNAME: 11ba6080d42a4d
-      SPRING_MAIL_PASSWORD: c419d069e004fa   
-      restart: always # garante reinício automático se o container parar
-      command: java -jar /app.jar
-
+      SPRING_MAIL_PASSWORD: c419d069e004fa
 
 volumes:
   postgres_data:

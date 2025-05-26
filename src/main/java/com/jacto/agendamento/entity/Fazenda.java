@@ -1,5 +1,7 @@
 package com.jacto.agendamento.entity;
 
+import java.util.Date;
+
 import javax.persistence.*;
 import org.locationtech.jts.geom.Point;
 import lombok.Getter;
@@ -35,12 +37,15 @@ public class Fazenda {
     @Column(name = "endereco", length = 500)
     private String endereco;
 
-    // Campo geográfico (Point)
-    @Column(name = "coordenadas", columnDefinition = "GEOMETRY(Point, 4326)")
-    private Point coordenadas;
+    // Campo geográfico (Point) substituído por latitude e longitude devido a problemas do postgis no docker
+    @Column(name = "latitude")
+    private Double latitude;
+
+    @Column(name = "longitude")
+    private Double longitude;
 
     @Column(name = "data_hora_cadastro")
-    private java.util.Date dataHoraCadastro;
+    private Date dataHoraCadastro;
 
     @Column(name = "ativo")
     private Boolean ativo;

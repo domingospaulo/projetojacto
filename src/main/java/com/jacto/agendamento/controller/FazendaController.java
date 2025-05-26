@@ -99,15 +99,10 @@ public class FazendaController {
             dto.setMatriculaCliente(entity.getCliente().getMatricula());
         }
 
-        CoordenadasDTO coordDto = new CoordenadasDTO();
-        if (entity.getCoordenadas() != null) {
-            coordDto.setX(entity.getCoordenadas().getX());
-            coordDto.setY(entity.getCoordenadas().getY());
-        }
-
+        dto.setLatitude(entity.getLatitude());
+        dto.setLongitude(entity.getLongitude());
         dto.setDescricao(entity.getDescricao());
         dto.setEndereco(entity.getEndereco());
-        dto.setCoordenadas(coordDto); 
         dto.setDataHoraCadastro(entity.getDataHoraCadastro());
         dto.setAtivo(entity.getAtivo());
         return dto;
@@ -128,8 +123,8 @@ public class FazendaController {
         entity.setCliente(cliente);
         entity.setDescricao(dto.getDescricao());
         entity.setEndereco(dto.getEndereco());
-        Point ponto = dto.getCoordenadas().toPoint(factory);
-        entity.setCoordenadas(ponto);
+        entity.setLatitude(dto.getLatitude());
+        entity.setLongitude(dto.getLongitude());
         entity.setDataHoraCadastro(dto.getDataHoraCadastro() != null ? dto.getDataHoraCadastro() : new java.util.Date());
         entity.setAtivo(dto.getAtivo());
 
