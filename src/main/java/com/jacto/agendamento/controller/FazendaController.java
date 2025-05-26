@@ -4,9 +4,9 @@ import com.jacto.agendamento.dto.FazendaDTO;
 import com.jacto.agendamento.entity.Fazenda;
 import com.jacto.agendamento.entity.Cliente;
 import com.jacto.agendamento.service.FazendaService;
+import com.jacto.agendamento.service.LocalizacaoService;
 import com.jacto.agendamento.service.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +18,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/fazendas")
-@DependsOn("jtsConfig") // Garante que o bean jtsConfig seja inicializado primeiro
 public class FazendaController {
 
     @Autowired
@@ -26,6 +25,9 @@ public class FazendaController {
     
     @Autowired
     private ClienteService clienteService;
+
+    @Autowired
+    private LocalizacaoService localizacaoService;
 
     @GetMapping
     public List<FazendaDTO> listarTodos() {
@@ -94,7 +96,9 @@ public class FazendaController {
 
         dto.setLatitude(entity.getLatitude());
         dto.setLongitude(entity.getLongitude());
-        dto.setDescricao(entity.getDescricao());
+
+        //Carregando detalhes da localização
+        dto.setDescricao(localizacaoService.getDetalhesLocalizacao(entity.getLatitude(), entity.getLongitude()));
         dto.setEndereco(entity.getEndereco());
         dto.setDataHoraCadastro(entity.getDataHoraCadastro());
         dto.setAtivo(entity.getAtivo());
