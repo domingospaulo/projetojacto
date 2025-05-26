@@ -1,12 +1,6 @@
 package com.jacto.agendamento.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.Column;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.JoinColumn;
+import javax.persistence.*;
 import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;

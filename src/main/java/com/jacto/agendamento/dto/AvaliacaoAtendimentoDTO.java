@@ -1,11 +1,11 @@
 package com.jacto.agendamento.dto;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Min;
 
 import java.util.Date;
 
-import jakarta.validation.constraints.Max;
+import javax.validation.constraints.Max;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -26,7 +26,7 @@ public class AvaliacaoAtendimentoDTO {
     @Max(value = 5, message = "Avaliação deve ser no máximo 5")
     private Integer avaliacao;
 
-    @jakarta.validation.constraints.Size(max = 1000, message = "Observação deve ter até 1000 caracteres")
+    @javax.validation.constraints.Size(max = 1000, message = "Observação deve ter até 1000 caracteres")
     private String observacao;
 
     @NotNull(message = "ID da visita técnica é obrigatório")
