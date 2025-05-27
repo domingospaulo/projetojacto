@@ -1,5 +1,6 @@
 package com.jacto.agendamento.dto;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.Getter;
@@ -7,7 +8,10 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -48,4 +52,11 @@ public class VisitaTecnicaDTO {
     private String observacao;
      
     private Boolean flagReagendamento; 
+
+    @Valid // Habilita a validação em cascata
+    private List<EquipamentoVisitaTecnicaDTO> equipamentosVisitaTecnica = new ArrayList<>();
+
+    @Valid // Habilita a validação em cascata
+    private List<PecaReposicaoVisitaTecnicaDTO> pecasReposicaoVisitaTecnica = new ArrayList<>();
+
 }

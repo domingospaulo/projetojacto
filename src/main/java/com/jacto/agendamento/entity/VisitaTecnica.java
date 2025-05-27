@@ -1,13 +1,19 @@
 package com.jacto.agendamento.entity;
 
 import javax.persistence.*;
+
+import com.jacto.agendamento.dto.EquipamentoVisitaTecnicaDTO;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -75,4 +81,13 @@ public class VisitaTecnica {
 
     @Column(name = "flag_reagendamento")
     private Boolean flagReagendamento;
+
+     // Relacionamento com EquipamentosVisitaTecnica
+    @OneToMany(mappedBy = "visitaTecnica", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<EquipamentosVisitaTecnica> equipamentosVisitaTecnica = new ArrayList<>();
+
+   // Relacionamento com PecasReposicaoVisitaTecnica
+    @OneToMany(mappedBy = "visitaTecnica", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PecasReposicaoVisitaTecnica> pecasReposicaoVisitaTecnica = new ArrayList<>();
+   
 }

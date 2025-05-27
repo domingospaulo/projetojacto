@@ -1,22 +1,36 @@
 package com.jacto.agendamento.controller;
 
-import com.jacto.agendamento.dto.VisitaTecnicaDTO;
-import com.jacto.agendamento.entity.VisitaTecnica;
-import com.jacto.agendamento.service.VisitaTecnicaService;
-import com.jacto.agendamento.service.FuncionarioService;
-import com.jacto.agendamento.service.FazendaService;
-import com.jacto.agendamento.service.TipoServicoService;
-import com.jacto.agendamento.service.PrioridadeService;
-import com.jacto.agendamento.service.StatusVisitaService;
-import com.jacto.agendamento.service.OcorrenciaService;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.jacto.agendamento.dto.EquipamentoVisitaTecnicaDTO;
+import com.jacto.agendamento.dto.PecaReposicaoVisitaTecnicaDTO;
+import com.jacto.agendamento.dto.VisitaTecnicaDTO;
+import com.jacto.agendamento.entity.EquipamentosVisitaTecnica;
+import com.jacto.agendamento.entity.PecasReposicaoVisitaTecnica;
+import com.jacto.agendamento.entity.VisitaTecnica;
+import com.jacto.agendamento.service.EquipamentoService;
+import com.jacto.agendamento.service.FazendaService;
+import com.jacto.agendamento.service.FuncionarioService;
+import com.jacto.agendamento.service.OcorrenciaService;
+import com.jacto.agendamento.service.PecaReposicaoService;
+import com.jacto.agendamento.service.PrioridadeService;
+import com.jacto.agendamento.service.StatusVisitaService;
+import com.jacto.agendamento.service.TipoServicoService;
+import com.jacto.agendamento.service.VisitaTecnicaService;
 
 @RestController
 @RequestMapping("/api/visitas")
@@ -29,6 +43,9 @@ public class VisitaTecnicaController {
     @Autowired private PrioridadeService prioridadeService;
     @Autowired private StatusVisitaService statusVisitaService;
     @Autowired private OcorrenciaService ocorrenciaService;
+    @Autowired private EquipamentoService equipamentoService;
+    @Autowired private PecaReposicaoService pecaReposicaoService;
+
 
     // Listar todos
     @GetMapping
@@ -154,6 +171,32 @@ public class VisitaTecnicaController {
         dto.setDataHoraVisitaFim(entity.getDataHoraVisitaFim());
         dto.setObservacao(entity.getObservacao());
         dto.setFlagReagendamento(entity.getFlagReagendamento());
+
+
+        // Converte EquipamentosVisitaTecnica para EquipamentoVisitaTecnicaDTO
+        if (entity.getEquipamentosVisitaTecnica() != null) {
+            dto.setEquipamentosVisitaTecnica(entity.getEquipamentosVisitaTecnica().stream()
+                .map(eq -> {
+                    EquipamentoVisitaTecnicaDTO eqDto = new EquipamentoVisitaTecnicaDTO();
+                    eqDto.setCodigoEquipamento(eq.getEquipamento().getCodigo());
+                    eqDto.setQtde(eq.getQtde());
+                    return eqDto;
+                })
+                .collect(Collectors.toList()));
+        }
+
+        // Converte PecasReposicaoVisitaTecnica para PecaReposicaoVisitaTecnicaDTO
+        if (entity.getPecasReposicaoVisitaTecnica() != null) {
+            dto.setPecasReposicaoVisitaTecnica(entity.getPecasReposicaoVisitaTecnica().stream()
+                .map(peca -> {
+                    PecaReposicaoVisitaTecnicaDTO pecaDto = new PecaReposicaoVisitaTecnicaDTO();
+                    pecaDto.setCodigoPecaReposicao(peca.getPecaReposicao().getCodigo());
+                    pecaDto.setQtde(peca.getQtde());
+                    return pecaDto;
+                })
+                .collect(Collectors.toList()));
+        }
+
         return dto;
     }
 
@@ -194,6 +237,34 @@ public class VisitaTecnicaController {
         entity.setObservacao(dto.getObservacao());
         entity.setFlagReagendamento(dto.getFlagReagendamento());
 
+        // Converte EquipamentoVisitaTecnicaDTO para EquipamentoVisitaTecnica
+        if (dto.getEquipamentosVisitaTecnica() != null) {
+            entity.setEquipamentosVisitaTecnica(dto.getEquipamentosVisitaTecnica().stream()
+                .map(eqDto -> {
+                    EquipamentosVisitaTecnica eq = new EquipamentosVisitaTecnica();
+                    eq.setEquipamento(equipamentoService.buscarPorCodigo(eqDto.getCodigoEquipamento())
+                            .orElseThrow(() -> new IllegalArgumentException("Equipamento não encontrado com o código: " + eqDto.getCodigoEquipamento())));
+                    eq.setQtde(eqDto.getQtde());
+                    eq.setVisitaTecnica(entity); // Define a visita técnica
+                    return eq;
+                })
+                .collect(Collectors.toList()));
+        }
+
+         // Converte PecaReposicaoVisitaTecnicaDTO para PecaReposicaoVisitaTecnica
+        if (dto.getPecasReposicaoVisitaTecnica() != null) {
+            entity.setPecasReposicaoVisitaTecnica(dto.getPecasReposicaoVisitaTecnica().stream()
+                .map(pecaDto -> {
+                    PecasReposicaoVisitaTecnica peca = new PecasReposicaoVisitaTecnica();
+                    peca.setPecaReposicao(pecaReposicaoService.buscarPorCodigo(pecaDto.getCodigoPecaReposicao())
+                            .orElseThrow(() -> new IllegalArgumentException("Peça de Reposição não encontrada com o código: " + pecaDto.getCodigoPecaReposicao())));
+                    peca.setQtde(pecaDto.getQtde());
+                    peca.setVisitaTecnica(entity); // Define a visita técnica
+                    return peca;
+                })
+                .collect(Collectors.toList()));
+        }
+        
         return entity;
     }
 }
