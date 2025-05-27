@@ -16,7 +16,7 @@ public class EmailServiceImpl  implements EmailService {
 
     private static final Logger logger = LoggerFactory.getLogger(EmailServiceImpl.class);
 
-    // @Value("${spring.mail.username}")
+    //@Value("${spring.mail.username}")
     //Remetente esta fixo por erro na leitura da variavel de ambiente
     //TODO: Corrigir leitura da variavel de ambiente
     private String remetente = "domingos.paul@gmail.com";
@@ -36,7 +36,6 @@ public class EmailServiceImpl  implements EmailService {
             logger.info("E-mail enviado com sucesso para: " + para);
         } catch (Exception e) {
             logger.error("Erro ao enviar e-mail para {}: {}", para, e.getMessage(), e);
-            e.printStackTrace();
         }
     }
 }

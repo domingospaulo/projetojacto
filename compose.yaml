@@ -17,23 +17,46 @@ services:
       timeout: 5s
       retries: 5
 
+  kafka:
+    image: 'confluentinc/cp-kafka:latest'
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_LISTENERS: PLAINTEXT://:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092 # Ajuste para o endereço da sua máquina
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_LOG_MESSAGE_FORMAT_VERSION: 3.0
+    depends_on:
+      - zookeeper
+
+  zookeeper:
+    image: 'confluentinc/cp-zookeeper:latest'
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
   app:
     build: .
     ports:
       - "8080:8080"
     depends_on:
-      postgres:
+      - postgres:
         condition: service_healthy
+      - kafka:
     restart: always
     command: java -jar /app.jar
-    # Não precisa mais das variáveis de ambiente para o banco de dados
-    # pois elas estão configuradas diretamente no application.properties
     environment:
       # Configurações do mailtrap para o Spring Boot
       SPRING_MAIL_HOST: sandbox.smtp.mailtrap.io
       SPRING_MAIL_PORT: 587
       SPRING_MAIL_USERNAME: 11ba6080d42a4d
       SPRING_MAIL_PASSWORD: c419d069e004fa
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092  # Conecta ao Kafka na rede Docker
 
 volumes:
   postgres_data:

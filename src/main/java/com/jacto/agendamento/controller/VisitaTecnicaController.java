@@ -1,5 +1,6 @@
 package com.jacto.agendamento.controller;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -68,7 +69,12 @@ public class VisitaTecnicaController {
         if (dto.getMatriculaFuncionario() == null ) {
             throw new IllegalArgumentException("É obrigatório informar matricula do funcionário");
         }
-       
+        
+         // Valida a data e hora do agendamento
+        if (dto.getDataHoraVisitaInicioAgendado() != null && dto.getDataHoraVisitaInicioAgendado().before(new Date())) {
+            throw new IllegalArgumentException("Não é possível agendar a visita para uma data e hora anterior à data e hora atual.");
+        }
+      
         VisitaTecnica entity = convertToEntity(dto);
         VisitaTecnica salvo = service.salvar(entity);
         return ResponseEntity.ok(convertToDto(salvo));
@@ -79,6 +85,11 @@ public class VisitaTecnicaController {
     public ResponseEntity<VisitaTecnicaDTO> atualizar(@PathVariable Long id, @Valid @RequestBody VisitaTecnicaDTO dto) {
         return service.buscarPorId(id)
                 .map(existingVisita -> {
+                    // Valida a data e hora do agendamento
+                    if (dto.getDataHoraVisitaInicioAgendado() != null && dto.getDataHoraVisitaInicioAgendado().before(new Date())) {
+                        throw new IllegalArgumentException("Não é possível agendar a visita para uma data e hora anterior à data e hora atual.");
+                    }
+
                     VisitaTecnica updatedVisita = convertToEntity(dto);
                     updatedVisita.setId(id); // Garante que o ID seja o mesmo
                     VisitaTecnica savedVisita = service.salvar(updatedVisita);
