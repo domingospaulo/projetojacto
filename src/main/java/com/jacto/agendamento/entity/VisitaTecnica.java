@@ -2,8 +2,6 @@ package com.jacto.agendamento.entity;
 
 import javax.persistence.*;
 
-import com.jacto.agendamento.dto.EquipamentoVisitaTecnicaDTO;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
