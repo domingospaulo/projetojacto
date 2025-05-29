@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface EstoqueEquipamentoService {
     List<EstoqueEquipamento> listarTodos();
     Optional<EstoqueEquipamento> buscarPorId(Long id);
-    List<EstoqueEquipamento> buscarPorCodigoEquipamento(Integer codigoEquipamento);
+    Optional<EstoqueEquipamento> buscarPorCodigoEquipamento(Integer codigoEquipamento);
     EstoqueEquipamento salvar(EstoqueEquipamento estoque);
     void deletar(Long id);
 }

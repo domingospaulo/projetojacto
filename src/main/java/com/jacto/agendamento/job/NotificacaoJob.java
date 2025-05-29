@@ -1,5 +1,6 @@
 package com.jacto.agendamento.job;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -20,6 +21,8 @@ import com.jacto.agendamento.service.VisitaTecnicaService;
 public class NotificacaoJob {
 
     private static final Logger logger = LoggerFactory.getLogger(NotificacaoJob.class);
+    private static final String DATE_FORMAT = "HH:mm:ss";
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
 
     @Autowired
     private VisitaTecnicaService visitaTecnicaService;
@@ -31,17 +34,26 @@ public class NotificacaoJob {
 
     @Scheduled(cron = "0 * * * * *") // Executa a cada minuto
     public void enviarNotificacoesVisitaTecnica() {
-        Date now = new Date();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(now);
-        calendar.add(Calendar.HOUR_OF_DAY, 1); // Próxima hora
-        Date nextHour = calendar.getTime();
+        logger.info("Início da execução do job de notificação de visita técnica às {}", dateFormat.format(new Date()));
 
-        List<VisitaTecnica> visitasProximas = visitaTecnicaService.buscarPorDataHoraVisitaInicioAgendadoEntre(now, nextHour);
+        Date inicio = new Date(); // Guarda o tempo de início
+        try {
+            Date now = new Date();
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(now);
+            calendar.add(Calendar.HOUR_OF_DAY, 1); // Próxima hora
+            Date nextHour = calendar.getTime();
 
-        for (VisitaTecnica visita : visitasProximas) {
-            kafkaTemplate.send(topicName, visita.getId()); // Envia o ID da visita para a fila
-            logger.info("Enviando notificação para a fila Kafka para a visita técnica com ID: {}", visita.getId());
+            List<VisitaTecnica> visitasProximas = visitaTecnicaService.buscarPorDataHoraVisitaInicioAgendadoEntre(now, nextHour);
+
+            for (VisitaTecnica visita : visitasProximas) {
+                kafkaTemplate.send(topicName, visita.getId()); // Envia o ID da visita para a fila
+                logger.info("Enviando notificação para a fila Kafka para a visita técnica com ID: {}", visita.getId());
+            }
+         } finally {
+            Date fim = new Date(); // Guarda o tempo de fim
+            logger.info("Fim da execução do job de notificação de visita técnica às {}. Tempo de execução: {}ms",
+                        dateFormat.format(fim), (fim.getTime() - inicio.getTime()));
         }
     }
 }

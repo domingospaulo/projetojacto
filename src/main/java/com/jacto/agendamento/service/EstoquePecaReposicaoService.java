@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface EstoquePecaReposicaoService {
     List<EstoquePecaReposicao> listarTodos();
     Optional<EstoquePecaReposicao> buscarPorId(Long id);
-    List<EstoquePecaReposicao> buscarPorCodigoPecaReposicao(Integer codigoPecaReposicao);
+    Optional<EstoquePecaReposicao> buscarPorCodigoPecaReposicao(Integer codigoPecaReposicao);
     EstoquePecaReposicao salvar(EstoquePecaReposicao estoque);
     void deletar(Long id);
 }

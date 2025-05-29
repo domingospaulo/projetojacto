@@ -26,8 +26,8 @@ public class EstoqueEquipamentoServiceImpl implements EstoqueEquipamentoService 
     }
 
     @Override
-    public List<EstoqueEquipamento> buscarPorCodigoEquipamento(Integer codigoEquipamento) {
-        return estoqueRepository.findByEquipamentoCodigo(codigoEquipamento);
+    public Optional<EstoqueEquipamento> buscarPorCodigoEquipamento(Integer codigoEquipamento) {
+        return estoqueRepository.findByEquipamento_Codigo(codigoEquipamento);
     }
 
     @Override

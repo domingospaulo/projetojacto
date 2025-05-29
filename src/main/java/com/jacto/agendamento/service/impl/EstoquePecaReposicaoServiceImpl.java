@@ -26,8 +26,8 @@ public class EstoquePecaReposicaoServiceImpl implements EstoquePecaReposicaoServ
     }
 
     @Override
-    public List<EstoquePecaReposicao> buscarPorCodigoPecaReposicao(Integer codigoPecaReposicao) {
-        return repository.findByPecaReposicaoCodigo(codigoPecaReposicao);
+    public Optional<EstoquePecaReposicao> buscarPorCodigoPecaReposicao(Integer codigoPecaReposicao) {
+        return repository.findByPecaReposicao_Codigo(codigoPecaReposicao);
     }
 
     @Override

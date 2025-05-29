@@ -35,9 +35,18 @@ import com.jacto.agendamento.service.PrioridadeService;
 import com.jacto.agendamento.service.StatusVisitaService;
 import com.jacto.agendamento.service.TipoServicoService;
 import com.jacto.agendamento.service.UsuarioService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Optional;
+import java.util.Date;
+
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class DataLoader implements ApplicationRunner {
+
+    private static final Logger logger = LoggerFactory.getLogger(DataLoader.class);
 
     @Autowired private PerfilService perfilService;
     @Autowired private TipoServicoService tipoServicoService;
@@ -53,85 +62,274 @@ public class DataLoader implements ApplicationRunner {
     @Autowired private EstoquePecaReposicaoService estoquePecaReposicaoService;
     @Autowired private EquipamentoService equipamentoService;
     @Autowired private UsuarioService usuarioService;
-    @Autowired private EstoqueEquipamentoService estoqueEquipamentoService;    
+    @Autowired private EstoqueEquipamentoService estoqueEquipamentoService;
 
     @Override
+    @Transactional
     public void run(ApplicationArguments args) throws Exception {
-
+        try {
         // Perfis
-        perfilService.salvar(new Perfil(100, "ACESSO_CLIENTE"));
-        perfilService.salvar(new Perfil(200, "ACESSO_FUNCIONARIO_TECNICO"));
-        perfilService.salvar(new Perfil(300, "ACESSO_FUNCIONARIO_ADMINISTRADOR"));
+        salvarPerfilSeNaoExistir(100, "ACESSO_CLIENTE");
+        salvarPerfilSeNaoExistir(200, "ACESSO_FUNCIONARIO_TECNICO");
+        salvarPerfilSeNaoExistir(300, "ACESSO_FUNCIONARIO_ADMINISTRADOR");
 
         // Tipos de serviço
-        tipoServicoService.salvar(new TipoServico(100, "AVALIAÇÃO TÉCNICA"));
-        tipoServicoService.salvar(new TipoServico(200, "ENTREGA EQUIPAMENTO"));
-        tipoServicoService.salvar(new TipoServico(300, "REPOSICAO PECA"));
+        salvarTipoServicoSeNaoExistir(100, "AVALIAÇÃO TÉCNICA");
+        salvarTipoServicoSeNaoExistir(200, "ENTREGA EQUIPAMENTO");
+        salvarTipoServicoSeNaoExistir(300, "REPOSICAO PECA");
 
         // Prioridades
-        prioridadeService.salvar(new Prioridade(100, "NORMAL", 1));
-        prioridadeService.salvar(new Prioridade(200, "MEDIA", 2));
-        prioridadeService.salvar(new Prioridade(300, "ALTA", 3));
+        salvarPrioridadeSeNaoExistir(100, "NORMAL", 1);
+        salvarPrioridadeSeNaoExistir(200, "MEDIA", 2);
+        salvarPrioridadeSeNaoExistir(300, "ALTA", 3);
 
         // Cargos
-        cargoService.salvar(new Cargo(100, "TECNICO"));
-        cargoService.salvar(new Cargo(200, "SUPERVISOR"));
+        salvarCargoSeNaoExistir(100, "TECNICO");
+        salvarCargoSeNaoExistir(200, "SUPERVISOR");
 
         // Operações
-        operacaoService.salvar(new Operacao(100, "CADASTRO AGENDAMENTO"));
-        operacaoService.salvar(new Operacao(200, "ALTERACAO AGENDAMENTO"));
-        operacaoService.salvar(new Operacao(300, "EXCLUSAO AGENDAMENTO"));
-        operacaoService.salvar(new Operacao(400, "RECLASSIFICACAO DE AGENDAMENTO AUTOMATICA"));
+        salvarOperacaoSeNaoExistir(100, "CADASTRO AGENDAMENTO");
+        salvarOperacaoSeNaoExistir(200, "ALTERACAO AGENDAMENTO");
+        salvarOperacaoSeNaoExistir(300, "EXCLUSAO AGENDAMENTO");
+        salvarOperacaoSeNaoExistir(400, "RECLASSIFICACAO DE AGENDAMENTO AUTOMATICA");
 
         // Status de visita
-        statusVisitaService.salvar(new StatusVisita(100, "AGENDADA"));
-        statusVisitaService.salvar(new StatusVisita(200, "REALIZADA COM SUCESSO"));
-        statusVisitaService.salvar(new StatusVisita(300, "REALIZADA COM OCORRENCIA"));
-        statusVisitaService.salvar(new StatusVisita(400, "CANCELADA PELA EMPRESA"));
-        statusVisitaService.salvar(new StatusVisita(500, "CANCELADA PELO CLIENTE"));
+        salvarStatusVisitaSeNaoExistir(100, "AGENDADA");
+        salvarStatusVisitaSeNaoExistir(200, "REALIZADA COM SUCESSO");
+        salvarStatusVisitaSeNaoExistir(300, "REALIZADA COM OCORRENCIA");
+        salvarStatusVisitaSeNaoExistir(400, "CANCELADA PELA EMPRESA");
+        salvarStatusVisitaSeNaoExistir(500, "CANCELADA PELO CLIENTE");
 
         // Ocorrências
-        ocorrenciaService.salvar(new Ocorrencia(100, "ENDERECO NAO ENCONTRADO"));
-        ocorrenciaService.salvar(new Ocorrencia(200, "CLIENTE AUSENTE"));
+        salvarOcorrenciaSeNaoExistir(100, "ENDERECO NAO ENCONTRADO");
+        salvarOcorrenciaSeNaoExistir(200, "CLIENTE AUSENTE");
 
         // Equipamentos
-        equipamentoService.salvar(new Equipamento(100, "EQUIPAMENTO 01"));
-        equipamentoService.salvar(new Equipamento(200, "EQUIPAMENTO 02"));
+        salvarEquipamentoSeNaoExistir(100, "EQUIPAMENTO 01");
+        salvarEquipamentoSeNaoExistir(200, "EQUIPAMENTO 02");
 
-       // Estoque de peças de reposição
-        estoqueEquipamentoService.salvar(new EstoqueEquipamento(equipamentoService.buscarPorCodigo(100).get(), 2));
-        estoqueEquipamentoService.salvar(new EstoqueEquipamento(equipamentoService.buscarPorCodigo(200).get(), 1));
-
-        // Peças de reposição
-        pecaReposicaoService.salvar(new PecaReposicao(100, "PECA 01"));
-        pecaReposicaoService.salvar(new PecaReposicao(200, "PECA 02"));
-
-       // Estoque de peças de reposição
-        estoquePecaReposicaoService.salvar(new EstoquePecaReposicao(pecaReposicaoService.buscarPorCodigo(100).get(), 5, 100.50));
-        estoquePecaReposicaoService.salvar(new EstoquePecaReposicao(pecaReposicaoService.buscarPorCodigo(200).get(), 2, 50.99));
+         //Peças de reposição
+        salvarPecaReposicaoSeNaoExistir(100, "PECA 01");
+        salvarPecaReposicaoSeNaoExistir(200, "PECA 02");
 
         // Pessoas de cliente e funcionário
-        pessoaService.salvar(new Pessoa("073.990.740-97", "JOSE DA SILVA", "josedasilva@mailnator.com", "98988889999"));
-        pessoaService.salvar(new Pessoa("098.961.300-35", "JOAO SOUZA", "joaosouza@mailnator.com", "98988889999"));
+        salvarPessoaSeNaoExistir("073.990.740-97", "JOSE DA SILVA", "josedasilva@mailnator.com", "98988889999");
+        salvarPessoaSeNaoExistir("098.961.300-35", "JOAO SOUZA", "joaosouza@mailnator.com", "98988889999");
 
         // Funcionários
-        funcionarioService.salvar(new Funcionario(2025002L, pessoaService.buscarPorCpfCnpj("073.990.740-97").get(), new Cargo(100, "TECNICO"), new java.util.Date(), true));
+        salvarFuncionarioSeNaoExistir(2025002L, "073.990.740-97", 100);
 
         // Clientes
-        clienteService.salvar(new Cliente(101011L, pessoaService.buscarPorCpfCnpj("073.990.740-97").get(), new java.util.Date(), true));
+        salvarClienteSeNaoExistir(101011L, "098.961.300-35");
+       
+       //Estoque de peças de reposição - sera excluido futuramente
+        salvarEstoqueEquipamentoSeNaoExistir(100, 2);
+        salvarEstoqueEquipamentoSeNaoExistir(200, 1);
+         //Estoque de peças de reposição - sera excluido futuramente
+        salvarEstoquePecaReposicaoSeNaoExistir(100, 5, 100.50);
+        salvarEstoquePecaReposicaoSeNaoExistir(200, 2, 50.99);
+         
+         salvarUsuarioSeNaoExistir(
+             "073.990.740-97", "123456",
+             2025002L, null,
+             100,
+             new Date(), true);
 
-        // Usuários
-        usuarioService.salvar(new Usuario(
-            "073.990.740-97", "123456", 
-            funcionarioService.buscarPorMatricula(2025001L).get(), null, 
-            perfilService.buscarPorCodigo(100).get(),  
-            new java.util.Date(), true));
+             salvarUsuarioSeNaoExistir(
+             "098.961.300-35", "123456", null,
+             101011L, 200,
+             new Date(), true);
 
-        // Usuários
-        usuarioService.salvar(new Usuario(
-            "098.961.300-35", "123456", null, clienteService.buscarPorMatricula(101011L).get(),
-            perfilService.buscarPorCodigo(200).get(),
-            new java.util.Date(), true));
+             logger.info("Carga de dados inicial completa!");
+        } catch (Exception e) {
+            logger.error("Erro durante a carga de dados inicial: {}", e.getMessage(), e);
+        }
     }
 
+
+    private void salvarPerfilSeNaoExistir(Integer codigo, String descricao) {
+        Optional<Perfil> perfilOptional = perfilService.buscarPorCodigo(codigo);
+        if (perfilOptional.isEmpty()) {
+            Perfil perfil = new Perfil(codigo, descricao);
+            perfilService.salvar(perfil);
+            logger.info("Perfil salvo: Código={}, Descrição={}", codigo, descricao);
+        }
+    }
+
+    private void salvarTipoServicoSeNaoExistir(Integer codigo, String descricao) {
+        Optional<TipoServico> tipoServicoOptional = tipoServicoService.buscarPorCodigo(codigo);
+        if (tipoServicoOptional.isEmpty()) {
+            TipoServico tipoServico = new TipoServico(codigo, descricao);
+            tipoServicoService.salvar(tipoServico);
+            logger.info("Tipo Serviço salvo: Código={}, Descrição={}", codigo, descricao);
+        }
+    }
+
+    private void salvarPrioridadeSeNaoExistir(Integer codigo, String descricao, Integer nivel) {
+        Optional<Prioridade> prioridadeOptional = prioridadeService.buscarPorCodigo(codigo);
+        if (prioridadeOptional.isEmpty()) {
+            Prioridade prioridade = new Prioridade(codigo, descricao, nivel);
+            prioridadeService.salvar(prioridade);
+             logger.info("Prioridade salva: Código={}, Descrição={}, Nível={}", codigo, descricao, nivel);
+        }
+    }
+
+    private void salvarCargoSeNaoExistir(Integer codigo, String descricao) {
+       Optional<Cargo> cargoOptional = cargoService.buscarPorCodigo(codigo);
+        if (cargoOptional.isEmpty()) {
+            Cargo cargo = new Cargo(codigo, descricao);
+            cargoService.salvar(cargo);
+            logger.info("Cargo salvo: Código={}, Descrição={}", codigo, descricao);
+       }
+    }
+
+    private void salvarOperacaoSeNaoExistir(Integer codigo, String descricao) {
+        Optional<Operacao> operacaoOptional = operacaoService.buscarPorCodigo(codigo);
+         if (operacaoOptional.isEmpty()) {
+            Operacao operacao = new Operacao(codigo, descricao);
+            operacaoService.salvar(operacao);
+            logger.info("Operação salva: Código={}, Descrição={}", codigo, descricao);
+         }
+    }
+
+    private void salvarStatusVisitaSeNaoExistir(Integer codigo, String descricao) {
+        Optional<StatusVisita> statusVisitaOptional = statusVisitaService.buscarPorCodigo(codigo);
+        if (statusVisitaOptional.isEmpty()) {
+               StatusVisita statusVisita = new StatusVisita(codigo, descricao);
+            statusVisitaService.salvar(statusVisita);
+            logger.info("Status Visita salvo: Código={}, Descrição={}", codigo, descricao);
+        }
+    }
+
+    private void salvarOcorrenciaSeNaoExistir(Integer codigo, String descricao) {
+        Optional<Ocorrencia> ocorrenciaOptional = ocorrenciaService.buscarPorCodigo(codigo);
+        if (ocorrenciaOptional.isEmpty()) {
+            Ocorrencia ocorrencia = new Ocorrencia(codigo, descricao);
+            ocorrenciaService.salvar(ocorrencia);
+            logger.info("Ocorrência salva: Código={}, Descrição={}", codigo, descricao);
+        }
+    }
+  
+ private void salvarEstoqueEquipamentoSeNaoExistir(Integer codigoEquipamento, Integer quantidade) {
+        Optional<EstoqueEquipamento> estoqueEquipamentoOptional = estoqueEquipamentoService.buscarPorCodigoEquipamento(codigoEquipamento);
+        if (estoqueEquipamentoOptional.isEmpty()) {
+            Optional<Equipamento> equipamentoOptional = equipamentoService.buscarPorCodigo(codigoEquipamento);
+            if (equipamentoOptional.isPresent()) {
+                EstoqueEquipamento estoqueEquipamento = new EstoqueEquipamento(equipamentoOptional.get(), quantidade);
+                estoqueEquipamentoService.salvar(estoqueEquipamento);
+                logger.info("Estoque Equipamento salvo: codigoEquipamento={}, quantidade={}", codigoEquipamento, quantidade);
+            } else {
+                logger.warn("Equipamento com código {} não encontrado!", codigoEquipamento);
+            }
+        }
+    }
+
+    private void salvarEstoquePecaReposicaoSeNaoExistir(Integer codigoPecaReposicao, Integer quantidade, Double valor) {
+       Optional<EstoquePecaReposicao> estoquePecaReposicaoOptional = estoquePecaReposicaoService.buscarPorCodigoPecaReposicao(codigoPecaReposicao);
+        if (estoquePecaReposicaoOptional.isEmpty()) {
+           Optional<PecaReposicao> pecaReposicaoOptional = pecaReposicaoService.buscarPorCodigo(codigoPecaReposicao);
+             if (pecaReposicaoOptional.isPresent()) {
+                PecaReposicao pecaReposicao = pecaReposicaoOptional.get();
+                estoquePecaReposicaoService.salvar(new EstoquePecaReposicao(pecaReposicao, quantidade, valor));
+                 logger.info("Estoque Peca Reposição salvo: codigoPecaReposicao={}, quantidade={}, valor={}", codigoPecaReposicao, quantidade, valor);
+              }else {
+                    logger.warn("Peça Reposição com código {} não encontrada!", codigoPecaReposicao);
+              }
+        }
+    }    
+
+    private void salvarEquipamentoSeNaoExistir(Integer codigo, String descricao) {
+        Optional<Equipamento> equipamentoOptional = equipamentoService.buscarPorCodigo(codigo);
+        if (equipamentoOptional.isEmpty()) {
+            Equipamento equipamento = new Equipamento(codigo, descricao);
+            equipamentoService.salvar(equipamento);
+             logger.info("Equipamento salvo: Código={}, Descrição={}", codigo, descricao);
+        }
+    }
+
+    private void salvarPecaReposicaoSeNaoExistir(Integer codigo, String descricao) {
+         Optional<PecaReposicao> pecaReposicaoOptional = pecaReposicaoService.buscarPorCodigo(codigo);
+         if (pecaReposicaoOptional.isEmpty()) {
+            PecaReposicao pecaReposicao = new PecaReposicao(codigo, descricao);
+            pecaReposicaoService.salvar(pecaReposicao);
+            logger.info("Peça Reposição salva: Código={}, Descrição={}", codigo, descricao);
+        }
+    }
+
+    private void salvarPessoaSeNaoExistir(String cpfCnpj, String nome, String email, String telefone) {
+        Optional<Pessoa> pessoaOptional = pessoaService.buscarPorCpfCnpj(cpfCnpj);
+        if (pessoaOptional.isEmpty()) {
+             Pessoa pessoa = new Pessoa(cpfCnpj, nome, email, telefone);
+            pessoaService.salvar(pessoa);
+            logger.info("Pessoa salva: CPF/CNPJ={}, Nome={}, Email={}", cpfCnpj, nome, email);
+        }
+    }
+
+    private void salvarFuncionarioSeNaoExistir(Long matricula, String cpfCnpj, Integer codigoCargo) {
+        Optional<Funcionario> funcionarioOptional = funcionarioService.buscarPorMatricula(matricula);
+              if (funcionarioOptional.isEmpty()) {
+                 Optional<Pessoa> pessoaOptional = pessoaService.buscarPorCpfCnpj(cpfCnpj);
+                 Optional<Cargo> cargoOptional = cargoService.buscarPorCodigo(codigoCargo);
+                   if (pessoaOptional.isPresent() && cargoOptional.isPresent()) {
+                         Pessoa pessoa = pessoaOptional.get();
+                         Cargo cargo = cargoOptional.get();
+                          Funcionario funcionario = new Funcionario(matricula, pessoa, cargo, new java.util.Date(), true);
+                         funcionarioService.salvar(funcionario);
+                         logger.info("Funcionário salvo: Matrícula={}, CPF/CNPJ={}, Cargo={}", matricula, cpfCnpj, codigoCargo);
+                  }else{
+                        logger.warn("Não foi possível salvar o funcionário: pessoa ou cargo não encontrados.");
+                     }
+            }
+    }
+
+    private void salvarClienteSeNaoExistir(Long matricula, String cpfCnpj) {
+         Optional<Cliente> clienteOptional = clienteService.buscarPorMatricula(matricula);
+         if (clienteOptional.isEmpty()) {
+                  Optional<Pessoa> pessoaOptional = pessoaService.buscarPorCpfCnpj(cpfCnpj);
+                  if (pessoaOptional.isPresent()) {
+                         Pessoa pessoa = pessoaOptional.get();
+                        clienteService.salvar(new Cliente(matricula, pessoa, new java.util.Date(), true));
+                         logger.info("Cliente salvo: Matrícula={}, CPF/CNPJ={}", matricula, cpfCnpj);
+                   }else{
+                         logger.warn("Não foi possível salvar o cliente: pessoa não encontrada.");
+                  }
+         }
+    }
+
+   private void salvarUsuarioSeNaoExistir(String login, String senha, Long matriculaFuncionario, Long matriculaCliente, Integer codigoPerfil, Date dataHoraCadastro, Boolean ativo) {
+       Optional<Usuario> usuarioOptional = usuarioService.buscarPorLogin(login);
+             if (usuarioOptional.isEmpty()) {
+                   Funcionario funcionario = null;
+                 Cliente cliente = null;
+
+                 if (matriculaFuncionario != null) {
+                      Optional<Funcionario> funcionarioOptional = funcionarioService.buscarPorMatricula(matriculaFuncionario);
+                      if (funcionarioOptional.isPresent()) {
+                               funcionario = funcionarioOptional.get();
+                           }else{
+                             logger.warn("Não foi possível criar usuário: funcionario não encontrado.");
+                            return;
+                           }
+                  }
+                 if (matriculaCliente != null) {
+                          Optional<Cliente> clienteOptional = clienteService.buscarPorMatricula(matriculaCliente);
+                          if (clienteOptional.isPresent()) {
+                                  cliente = clienteOptional.get();
+                              }else{
+                                  logger.warn("Não foi possível criar usuário: cliente não encontrado.");
+                                 return;
+                              }
+                 }
+
+                 Optional<Perfil> perfilOptional = perfilService.buscarPorCodigo(codigoPerfil);
+                  if (perfilOptional.isPresent()) {
+                         Perfil perfil = perfilOptional.get();
+                           Usuario novoUsuario = new Usuario(login, senha, funcionario, cliente, perfil, dataHoraCadastro, ativo);
+                          usuarioService.salvar(novoUsuario);
+                           logger.info("Usuário salvo: login={}, perfil={}", login, codigoPerfil);
+                   }else {
+                           logger.warn("Perfil com código {} não encontrado!", codigoPerfil);
+                   }
+              }
+          }
 }
