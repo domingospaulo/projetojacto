@@ -158,31 +158,49 @@ public class DataLoader implements ApplicationRunner {
         salvarUsuarioSeNaoExistir(
              "073.990.740-97", passwordEncoder.encode("123456"),
              2025002L, null,
-             100,
+             200,
              new Date(), true);
 
         salvarUsuarioSeNaoExistir(
              "098.961.300-35", passwordEncoder.encode("123456"), null,
-             101011L, 200,
+             101011L, 100,
              new Date(), true);
 
-        // salvarVisitaTecnica(
-        //     2025002L, 
-        //     "Fazenda Paraiso", 
-        //     new Date(), 
-        //     15, 
-        //     30, 
-        //     100, // código de tipo de serviço
-        //     100, // código de prioridade
-        //     100, // código de status de visita
-        //     null, // código de ocorrência
-        //     true, // flag reagendamento
-        //     true, // ativo
-        //     100, // código do equipamento
-        //     1,    // quantidade do equipamento
-        //     100, // código da peça
-        //     1    // quantidade da peça
-        // );
+        salvarVisitaTecnica(
+            2025002L, 
+            "Fazenda Descanso", 
+            new Date(), 
+            5, 
+            15, 
+            100, // código de tipo de serviço
+            100, // código de prioridade
+            100, // código de status de visita
+            null, // código de ocorrência
+            true, // flag reagendamento
+            true, // ativo
+            100, // código do equipamento
+            1,    // quantidade do equipamento
+            100, // código da peça
+            1    // quantidade da peça
+        );
+
+        salvarVisitaTecnica(
+            2025002L, 
+            "Fazenda Paraiso", 
+            new Date(), 
+            15, 
+            30, 
+            100, // código de tipo de serviço
+            100, // código de prioridade
+            100, // código de status de visita
+            null, // código de ocorrência
+            true, // flag reagendamento
+            true, // ativo
+            100, // código do equipamento
+            1,    // quantidade do equipamento
+            100, // código da peça
+            1    // quantidade da peça
+        );
 
         Date now = new Date();
         Calendar calendar = Calendar.getInstance();
@@ -203,13 +221,13 @@ public class DataLoader implements ApplicationRunner {
     }
 
     private void salvarVisitaTecnica(
-        Long matriculaFuncionario, String descricaoFazenda, Date dataHoraAgendamento,
-        int minutosInicio, int minutosFim, Integer codigoTipoServico, Integer codigoPrioridade,
-        Integer codigoStatusVisita, Integer codigoOcorrencia, boolean flagReagendamento,
-        boolean ativo,
-        Integer codigoEquipamento, Integer qtdeEquipamentos,
-        Integer codigoPecaReposicao, Integer qtdePecasReposicao
-    ) {
+            Long matriculaFuncionario, String descricaoFazenda, Date dataHoraAgendamento,
+            int minutosInicio, int minutosFim, Integer codigoTipoServico, Integer codigoPrioridade,
+            Integer codigoStatusVisita, Integer codigoOcorrencia, boolean flagReagendamento,
+            boolean ativo,
+            Integer codigoEquipamento, Integer qtdeEquipamentos,
+            Integer codigoPecaReposicao, Integer qtdePecasReposicao
+        ) {
 
         Optional<Funcionario> funcionarioOptional = funcionarioService.buscarPorMatricula(matriculaFuncionario);
         Optional<Fazenda> fazendaOptional = fazendaService.findByDescricaoAndClienteMatricula(descricaoFazenda, 101011L);  // Assuming the matriculaCliente is fixed to 101011L (as in your original DataLoader)
@@ -254,6 +272,15 @@ public class DataLoader implements ApplicationRunner {
             visitaTecnica.setOcorrencia(ocorrencia);
             visitaTecnica.setFlagReagendamento(flagReagendamento);
 
+            if (visitaTecnica.getId() != null)
+                visitaTecnicaService.buscarPorId(visitaTecnica.getId())
+                    .ifPresentOrElse(
+                        vt -> {
+                            logger.warn("VisitaTecnica com ID {} já existe. Atualizando dados.", vt.getId());
+                            visitaTecnica.setId(vt.getId()); // Atualiza o ID para evitar duplicação
+                        },
+                        () -> logger.info("Criando nova VisitaTecnica.")
+                    );
             visitaTecnicaService.salvar(visitaTecnica);
 
             // Salvar equipamentos da visita
