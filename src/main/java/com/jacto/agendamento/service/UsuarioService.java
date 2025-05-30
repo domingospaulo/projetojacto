@@ -11,4 +11,7 @@ public interface UsuarioService {
     Optional<Usuario> buscarPorPerfilCodigo(Integer perfilCodigo);
     Usuario salvar(Usuario usuario);
     void deletar(String login);
+
+    boolean validarCredenciais(String login, String senha);
+    String buscarPerfilPorLogin(String login);
 }

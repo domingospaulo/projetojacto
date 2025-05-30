@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,6 +58,9 @@ import com.jacto.agendamento.service.VisitaTecnicaService;
 public class DataLoader implements ApplicationRunner {
 
     private static final Logger logger = LoggerFactory.getLogger(DataLoader.class);
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired private PerfilService perfilService;
     @Autowired private TipoServicoService tipoServicoService;
@@ -152,13 +156,13 @@ public class DataLoader implements ApplicationRunner {
         salvarFazendaSeNaoExistir("Fazenda Descanso", 101011L, "", -2.493462, -44.267920, new Date(), true);          
 
         salvarUsuarioSeNaoExistir(
-             "073.990.740-97", "123456",
+             "073.990.740-97", passwordEncoder.encode("123456"),
              2025002L, null,
              100,
              new Date(), true);
 
         salvarUsuarioSeNaoExistir(
-             "098.961.300-35", "123456", null,
+             "098.961.300-35", passwordEncoder.encode("123456"), null,
              101011L, 200,
              new Date(), true);
 

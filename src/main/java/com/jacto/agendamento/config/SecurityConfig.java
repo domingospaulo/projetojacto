@@ -1,23 +1,36 @@
 package com.jacto.agendamento.config;
-
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-@Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+    
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
-            .authorizeRequests()
-                .antMatchers("/**").permitAll() // Permite acesso irrestrito a todos os endpoints
-                .anyRequest().permitAll() // Certifique-se de que todas as requisições estão permitidas
-                .and()
-            .csrf().disable() // Desabilita CSRF (útil para APIs)
-            .formLogin().disable() // Desabilita o formulário de login padrão
-            .httpBasic().disable(); // Desabilita a autenticação básica HTTP
+        http.csrf().disable()
+            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .and()        
+            .authorizeRequests()                // Autorizações para endpoints
+                .antMatchers("/login", "/public/**").permitAll() // endpoints grátis
+                .anyRequest().authenticated() // os demais precisam estar autenticados
+            .and()
+            // Adicionar o filtro JWT antes do filtro padrão de autenticação
+            .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 }

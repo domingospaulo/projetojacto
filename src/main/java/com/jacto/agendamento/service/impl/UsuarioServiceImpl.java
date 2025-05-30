@@ -4,13 +4,16 @@ import com.jacto.agendamento.entity.Usuario;
 import com.jacto.agendamento.repository.UsuarioRepository;
 import com.jacto.agendamento.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
+    
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private UsuarioRepository repository;
@@ -39,4 +42,22 @@ public class UsuarioServiceImpl implements UsuarioService {
     public void deletar(String login) {
         repository.deleteById(login);
     }
-}
+
+    public boolean validarCredenciais(String login, String senha) {
+        Optional<Usuario> usuarioOpt = repository.findById(login);
+        if (usuarioOpt.isPresent()) {
+            Usuario usuario = usuarioOpt.get();
+            return passwordEncoder.matches(senha, usuario.getSenha());
+        }
+        return false;
+    }
+
+    public String buscarPerfilPorLogin(String login) {
+        Optional<Usuario> usuarioOpt = repository.findById(login);
+        if (usuarioOpt.isPresent()) {
+            Usuario usuario = usuarioOpt.get();
+            return String.valueOf(usuario.getPerfil().getCodigo());
+        }
+        return null;
+    }
+}    
