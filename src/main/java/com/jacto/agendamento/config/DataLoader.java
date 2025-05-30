@@ -166,23 +166,23 @@ public class DataLoader implements ApplicationRunner {
              101011L, 200,
              new Date(), true);
 
-        salvarVisitaTecnica(
-            2025002L, 
-            "Fazenda Paraiso", 
-            new Date(), 
-            15, 
-            30, 
-            100, // código de tipo de serviço
-            100, // código de prioridade
-            100, // código de status de visita
-            null, // código de ocorrência
-            true, // flag reagendamento
-            true, // ativo
-            100, // código do equipamento
-            1,    // quantidade do equipamento
-            100, // código da peça
-            1    // quantidade da peça
-        );
+        // salvarVisitaTecnica(
+        //     2025002L, 
+        //     "Fazenda Paraiso", 
+        //     new Date(), 
+        //     15, 
+        //     30, 
+        //     100, // código de tipo de serviço
+        //     100, // código de prioridade
+        //     100, // código de status de visita
+        //     null, // código de ocorrência
+        //     true, // flag reagendamento
+        //     true, // ativo
+        //     100, // código do equipamento
+        //     1,    // quantidade do equipamento
+        //     100, // código da peça
+        //     1    // quantidade da peça
+        // );
 
         Date now = new Date();
         Calendar calendar = Calendar.getInstance();

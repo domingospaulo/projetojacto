@@ -6,7 +6,7 @@ import java.util.Date;
 
 @Service
 public class JwtService {
-    private final String secretKey = "Kj@t07$.256.bit.secret87hdaçobh@";
+    private final String secretKey = "Kj@t07$.256.bit.secret87hdadobh@";
 
     public String generateToken(String username, String perfilCodigo) {
         return Jwts.builder()

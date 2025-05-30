@@ -26,8 +26,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String username = jwtService.getUsernameFromToken(token);
             String perfil = jwtService.getPerfilFromToken(token);
 
-            // Aqui você pode montar seu UserDetails e definir o usuário autenticado
-            // Para simplificar, apenas define o contexto com o username
+            //TODO Implementar user details service to load user details
             UsernamePasswordAuthenticationToken auth = 
                 new UsernamePasswordAuthenticationToken(username, null, null);
             auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
