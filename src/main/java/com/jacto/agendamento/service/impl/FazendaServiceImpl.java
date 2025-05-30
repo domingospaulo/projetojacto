@@ -39,4 +39,9 @@ public class FazendaServiceImpl implements FazendaService {
     public void deletar(Long id) {
         repository.deleteById(id);
     }
+
+    @Override
+    public Optional<Fazenda> findByDescricaoAndClienteMatricula(String descricao, Long matriculaCliente) {
+        return repository.findByDescricaoAndCliente_Matricula(descricao, matriculaCliente);
+    }   
 }

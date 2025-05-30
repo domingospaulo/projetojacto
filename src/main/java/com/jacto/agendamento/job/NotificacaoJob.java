@@ -46,6 +46,11 @@ public class NotificacaoJob {
 
             List<VisitaTecnica> visitasProximas = visitaTecnicaService.buscarPorDataHoraVisitaInicioAgendadoEntre(now, nextHour);
 
+            if (visitasProximas.isEmpty()) {
+                logger.info("Nenhuma visita técnica agendada para a próxima hora.");
+                return;
+            }
+
             for (VisitaTecnica visita : visitasProximas) {
                 kafkaTemplate.send(topicName, visita.getId()); // Envia o ID da visita para a fila
                 logger.info("Enviando notificação para a fila Kafka para a visita técnica com ID: {}", visita.getId());

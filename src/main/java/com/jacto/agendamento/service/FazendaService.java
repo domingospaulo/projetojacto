@@ -11,4 +11,5 @@ public interface FazendaService {
     List<Fazenda> buscarPorMatriculaCliente(Long matriculaCliente);
     Fazenda salvar(Fazenda fazenda);
     void deletar(Long id);
+    Optional<Fazenda> findByDescricaoAndClienteMatricula(String descricao, Long matriculaCliente);
 }

@@ -9,6 +9,7 @@ import com.jacto.agendamento.entity.Cliente;
 import com.jacto.agendamento.entity.Equipamento;
 import com.jacto.agendamento.entity.EstoqueEquipamento;
 import com.jacto.agendamento.entity.EstoquePecaReposicao;
+import com.jacto.agendamento.entity.Fazenda;
 import com.jacto.agendamento.entity.Funcionario;
 import com.jacto.agendamento.entity.Ocorrencia;
 import com.jacto.agendamento.entity.Operacao;
@@ -25,6 +26,7 @@ import com.jacto.agendamento.service.ClienteService;
 import com.jacto.agendamento.service.EquipamentoService;
 import com.jacto.agendamento.service.EstoqueEquipamentoService;
 import com.jacto.agendamento.service.EstoquePecaReposicaoService;
+import com.jacto.agendamento.service.FazendaService;
 import com.jacto.agendamento.service.FuncionarioService;
 import com.jacto.agendamento.service.OcorrenciaService;
 import com.jacto.agendamento.service.OperacaoService;
@@ -37,10 +39,8 @@ import com.jacto.agendamento.service.TipoServicoService;
 import com.jacto.agendamento.service.UsuarioService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.Optional;
 import java.util.Date;
-
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
@@ -63,11 +63,14 @@ public class DataLoader implements ApplicationRunner {
     @Autowired private EquipamentoService equipamentoService;
     @Autowired private UsuarioService usuarioService;
     @Autowired private EstoqueEquipamentoService estoqueEquipamentoService;
-
+    @Autowired private FazendaService fazendaService; 
+    
     @Override
     @Transactional
     public void run(ApplicationArguments args) throws Exception {
         try {
+        logger.info("Iniciando carga de dados iniciais...");
+           
         // Perfis
         salvarPerfilSeNaoExistir(100, "ACESSO_CLIENTE");
         salvarPerfilSeNaoExistir(200, "ACESSO_FUNCIONARIO_TECNICO");
@@ -128,14 +131,18 @@ public class DataLoader implements ApplicationRunner {
          //Estoque de peças de reposição - sera excluido futuramente
         salvarEstoquePecaReposicaoSeNaoExistir(100, 5, 100.50);
         salvarEstoquePecaReposicaoSeNaoExistir(200, 2, 50.99);
-         
-         salvarUsuarioSeNaoExistir(
+   
+         // Fazendas
+        salvarFazendaSeNaoExistir("Fazenda Paraiso", 101011L, "", -2.511396, -44.246801, new Date(), true);
+        salvarFazendaSeNaoExistir("Fazenda Descanso", 101011L, "", -2.493462, -44.267920, new Date(), true);          
+
+        salvarUsuarioSeNaoExistir(
              "073.990.740-97", "123456",
              2025002L, null,
              100,
              new Date(), true);
 
-             salvarUsuarioSeNaoExistir(
+        salvarUsuarioSeNaoExistir(
              "098.961.300-35", "123456", null,
              101011L, 200,
              new Date(), true);
@@ -145,6 +152,25 @@ public class DataLoader implements ApplicationRunner {
             logger.error("Erro durante a carga de dados inicial: {}", e.getMessage(), e);
         }
     }
+
+    private void salvarFazendaSeNaoExistir(String descricao, Long matriculaCliente, String endereco, Double latitude, Double longitude, Date dataHoraCadastro, Boolean ativo) {
+        Optional<Cliente> clienteOptional = clienteService.buscarPorMatricula(matriculaCliente);
+        
+        if (clienteOptional.isPresent()) {
+            Fazenda novaFazenda = new Fazenda();
+            novaFazenda.setCliente(clienteOptional.get());
+            novaFazenda.setDescricao(descricao);
+            novaFazenda.setEndereco(endereco);
+            novaFazenda.setLatitude(latitude);
+            novaFazenda.setLongitude(longitude);
+            novaFazenda.setDataHoraCadastro(dataHoraCadastro);
+            novaFazenda.setAtivo(ativo);
+            fazendaService.salvar(novaFazenda);
+            logger.info("Fazenda salva: descrição={}, matriculaCliente={}", descricao, matriculaCliente);
+        }else {
+            logger.warn("Não foi possível salvar a fazenda: Cliente com a matricula {} não encontrado", matriculaCliente);
+        }
+  }
 
 
     private void salvarPerfilSeNaoExistir(Integer codigo, String descricao) {
