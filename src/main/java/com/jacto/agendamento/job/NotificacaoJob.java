@@ -8,7 +8,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -28,26 +28,19 @@ public class NotificacaoJob {
     private VisitaTecnicaService visitaTecnicaService;
 
     @Autowired
-    private KafkaTemplate<String, Long> kafkaTemplate;
+    private JmsTemplate jmsTemplate;
 
-    private final String topicName = "visita-tecnica-notificacoes"; // Nome do tópico Kafka
-
-    @Scheduled(cron = "0 * * * * *") // Executa a cada minuto
+    @Scheduled(cron = "0 0/30 * * * *") // Executa no minuto 0 e 30 de cada hora
     public void enviarNotificacoesVisitaTecnica() {
         logger.info("Início da execução do job de notificação de visita técnica às {}", dateFormat.format(new Date()));
 
         Date inicio = new Date(); // Guarda o tempo de início
         try {
-
-            if (kafkaTemplate == null){
-                logger.error("KafkaTemplate is null. Verify kafka configuration");
-                return;
-            }
            
             Date now = new Date();
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(now);
-            calendar.add(Calendar.HOUR_OF_DAY, 1); // Próxima hora
+            calendar.add(Calendar.MINUTE, 30); // Próximos 30 minutos
             Date nextHour = calendar.getTime();
 
             List<VisitaTecnica> visitasProximas = visitaTecnicaService.buscarPorDataHoraVisitaInicioAgendadoEntre(now, nextHour);
@@ -58,8 +51,8 @@ public class NotificacaoJob {
             }
 
             for (VisitaTecnica visita : visitasProximas) {
-                kafkaTemplate.send(topicName, visita.getId()); // Envia o ID da visita para a fila
-                logger.info("Enviando notificação para a fila Kafka para a visita técnica com ID: {}", visita.getId());
+                jmsTemplate.convertAndSend("visita-tecnica-queue", visita.getId());
+                logger.info("Enviando notificação para a fila JMS para a visita técnica com ID: {}", visita.getId());
             }
          } finally {
             Date fim = new Date(); // Guarda o tempo de fim

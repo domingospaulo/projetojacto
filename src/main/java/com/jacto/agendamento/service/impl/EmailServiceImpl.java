@@ -16,17 +16,12 @@ public class EmailServiceImpl  implements EmailService {
 
     private static final Logger logger = LoggerFactory.getLogger(EmailServiceImpl.class);
 
-    //@Value("${spring.mail.username}")
-    //Remetente esta fixo por erro na leitura da variavel de ambiente
-    //TODO: Corrigir leitura da variavel de ambiente
     private String remetente = "domingos.paul@gmail.com";
 
     public void enviarEmail(String para, String assunto, String texto) {
         SimpleMailMessage mensagem = new SimpleMailMessage();
 
-        // Define o remetente
         mensagem.setFrom(remetente);
-
         mensagem.setTo(para);
         mensagem.setSubject(assunto);
         mensagem.setText(texto);
