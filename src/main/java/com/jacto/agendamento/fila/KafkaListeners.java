@@ -1,5 +1,4 @@
-package com.jacto.agendamento.listeners;
-
+package com.jacto.agendamento.fila;
 
 import com.jacto.agendamento.entity.VisitaTecnica;
 import com.jacto.agendamento.entity.Funcionario;
@@ -9,19 +8,19 @@ import com.jacto.agendamento.service.EmailService;
 import com.jacto.agendamento.service.VisitaTecnicaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
 import org.springframework.stereotype.Component;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Optional;
 
 @Component
 public class KafkaListeners {
-
-    private static final Logger logger = LoggerFactory.getLogger(KafkaListeners.class);
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+    @Autowired
+    private KafkaListenerEndpointRegistry kafkaListenerEndpointRegistry;
 
     @Autowired
     private VisitaTecnicaService visitaTecnicaService;
@@ -29,8 +28,25 @@ public class KafkaListeners {
     @Autowired
     private EmailService emailService;
 
-    @KafkaListener(topics = "visita-tecnica-notificacoes", groupId = "grupo-notificacoes")
-    void listener(Long visitaTecnicaId) {
+    public void checkListenerStatus() {
+        kafkaListenerEndpointRegistry.getAllListenerContainers().forEach(container -> {
+            if (container.isRunning()) {
+                System.out.println("Listener container is running: " + container.getListenerId());
+            } else {
+                System.out.println("Listener container is NOT running: " + container.getListenerId());
+            }
+        });
+    }
+
+    private static final Logger logger = LoggerFactory.getLogger(KafkaListeners.class);
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+
+    @KafkaListener(topics = "visita-tecnica-notificacoes", groupId = "grupo-notificacoes", 
+                   containerFactory = "kafkaListenerContainerFactory")
+    void listener(ConsumerRecord<String, Long> record) {
+        logger.info("Received message: Key = {}, Value = {}, Headers = {}", record.key(), record.value(), record.headers());
+        Long visitaTecnicaId = record.value();
+
         logger.info("Recebida notificação para a visita técnica com ID: {}", visitaTecnicaId);
 
         // Busca a visita técnica pelo ID

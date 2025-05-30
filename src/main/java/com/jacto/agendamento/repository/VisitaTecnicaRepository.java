@@ -28,5 +28,5 @@ public interface VisitaTecnicaRepository extends JpaRepository<VisitaTecnica, Lo
     List<VisitaTecnica> findByOcorrenciaCodigo(Integer codigoOcorrencia);
 
     // Buscar visitas cuja data_hora_visita_inicio esteja entre duas datas
-    List<VisitaTecnica> findByDataHoraVisitaInicioBetween(Date inicio, Date fim);
+    List<VisitaTecnica> findByDataHoraVisitaInicioAgendadoBetween(Date inicio, Date fim);
 }

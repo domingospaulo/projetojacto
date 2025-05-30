@@ -11,6 +11,7 @@ import com.jacto.agendamento.entity.EstoqueEquipamento;
 import com.jacto.agendamento.entity.EstoquePecaReposicao;
 import com.jacto.agendamento.entity.Fazenda;
 import com.jacto.agendamento.entity.Funcionario;
+import com.jacto.agendamento.entity.HistoricoAgendamentoVisitaTecnica;
 import com.jacto.agendamento.entity.Ocorrencia;
 import com.jacto.agendamento.entity.Operacao;
 import com.jacto.agendamento.entity.PecaReposicao;
@@ -20,7 +21,7 @@ import com.jacto.agendamento.entity.Prioridade;
 import com.jacto.agendamento.entity.StatusVisita;
 import com.jacto.agendamento.entity.TipoServico;
 import com.jacto.agendamento.entity.Usuario;
-// Importando seus serviços
+import com.jacto.agendamento.entity.VisitaTecnica;
 import com.jacto.agendamento.service.CargoService;
 import com.jacto.agendamento.service.ClienteService;
 import com.jacto.agendamento.service.EquipamentoService;
@@ -28,6 +29,7 @@ import com.jacto.agendamento.service.EstoqueEquipamentoService;
 import com.jacto.agendamento.service.EstoquePecaReposicaoService;
 import com.jacto.agendamento.service.FazendaService;
 import com.jacto.agendamento.service.FuncionarioService;
+import com.jacto.agendamento.service.HistoricoAgendamentoVisitaTecnicaService;
 import com.jacto.agendamento.service.OcorrenciaService;
 import com.jacto.agendamento.service.OperacaoService;
 import com.jacto.agendamento.service.PecaReposicaoService;
@@ -37,10 +39,14 @@ import com.jacto.agendamento.service.PrioridadeService;
 import com.jacto.agendamento.service.StatusVisitaService;
 import com.jacto.agendamento.service.TipoServicoService;
 import com.jacto.agendamento.service.UsuarioService;
+import com.jacto.agendamento.service.VisitaTecnicaService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.Optional;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+
 import org.springframework.transaction.annotation.Transactional;
 
 @Component
@@ -64,7 +70,9 @@ public class DataLoader implements ApplicationRunner {
     @Autowired private UsuarioService usuarioService;
     @Autowired private EstoqueEquipamentoService estoqueEquipamentoService;
     @Autowired private FazendaService fazendaService; 
-    
+    @Autowired private VisitaTecnicaService visitaTecnicaService; 
+    @Autowired private HistoricoAgendamentoVisitaTecnicaService historicoAgendamentoVisitaTecnicaService;
+
     @Override
     @Transactional
     public void run(ApplicationArguments args) throws Exception {
@@ -147,31 +155,125 @@ public class DataLoader implements ApplicationRunner {
              101011L, 200,
              new Date(), true);
 
-             logger.info("Carga de dados inicial completa!");
+        salvarVisitaTecnica(2025002L, "Fazenda Paraiso", new Date(), 15, 30, 100, 100, 100, null, true, true);
+ 
+        Date now = new Date();
+        Calendar calendar = Calendar.getInstance();
+        logger.info("now" + now);        
+        calendar.setTime(now);
+        calendar.add(Calendar.HOUR_OF_DAY, 1); // Próxima hora
+        Date nextHour = calendar.getTime();
+        logger.info("nextHour" + nextHour);
+
+        List<VisitaTecnica> visitasProximas = visitaTecnicaService.buscarPorDataHoraVisitaInicioAgendadoEntre(now, nextHour);
+ 
+        logger.info("visitasProximas: " + visitasProximas.size());
+
+        logger.info("Carga de dados inicial completa!");
         } catch (Exception e) {
             logger.error("Erro durante a carga de dados inicial: {}", e.getMessage(), e);
         }
     }
 
+    private void salvarVisitaTecnica(Long matriculaFuncionario, String descricaoFazenda, Date dataHoraAgendamento,
+                                      int minutosInicio, int minutosFim, Integer codigoTipoServico, Integer codigoPrioridade,
+                                      Integer codigoStatusVisita, Integer codigoOcorrencia, boolean flagReagendamento,
+                                      boolean ativo) {
+
+        // Find the entities based on the provided IDs/descriptions
+        Optional<Funcionario> funcionarioOptional = funcionarioService.buscarPorMatricula(matriculaFuncionario);
+        Optional<Fazenda> fazendaOptional = fazendaService.findByDescricaoAndClienteMatricula(descricaoFazenda, 101011L);  // Assuming the matriculaCliente is fixed to 101011L (as in your original DataLoader)
+
+        Optional<TipoServico> tipoServicoOptional = tipoServicoService.buscarPorCodigo(codigoTipoServico);
+        Optional<Prioridade> prioridadeOptional = prioridadeService.buscarPorCodigo(codigoPrioridade);
+        Optional<StatusVisita> statusVisitaOptional = statusVisitaService.buscarPorCodigo(codigoStatusVisita);
+
+        Ocorrencia ocorrencia = null;
+        if (codigoOcorrencia != null) {
+            Optional<Ocorrencia> ocorrenciaOptional = ocorrenciaService.buscarPorCodigo(codigoOcorrencia);
+            if (ocorrenciaOptional.isPresent()) {
+                ocorrencia = ocorrenciaOptional.get();
+            } else {
+                logger.warn("Ocorrencia com código {} não encontrada.  VisitaTecnica será criada sem ocorrência.", codigoOcorrencia);
+            }
+        }
+
+        Calendar calInicio = Calendar.getInstance();
+        calInicio.setTime(dataHoraAgendamento);
+        calInicio.add(Calendar.MINUTE, minutosInicio);
+        Date dataHoraVisitaInicioAgendado = calInicio.getTime();
+
+        Calendar calFim = Calendar.getInstance();
+        calFim.setTime(dataHoraAgendamento);
+        calFim.add(Calendar.MINUTE, minutosFim);
+        Date dataHoraVisitaFimAgendado = calFim.getTime();
+
+        if (funcionarioOptional.isPresent() && fazendaOptional.isPresent() && tipoServicoOptional.isPresent()
+                && prioridadeOptional.isPresent() && statusVisitaOptional.isPresent()) {
+
+            VisitaTecnica visitaTecnica = new VisitaTecnica();
+            visitaTecnica.setFuncionario(funcionarioOptional.get());
+            visitaTecnica.setFazenda(fazendaOptional.get());
+            visitaTecnica.setDataHoraAgendamento(dataHoraAgendamento);
+            visitaTecnica.setDataHoraVisitaInicioAgendado(dataHoraVisitaInicioAgendado);
+            visitaTecnica.setDataHoraVisitaFimAgendado(dataHoraVisitaFimAgendado);
+            visitaTecnica.setTipoServico(tipoServicoOptional.get());
+            visitaTecnica.setPrioridade(prioridadeOptional.get());
+            visitaTecnica.setStatusVisita(statusVisitaOptional.get());
+            visitaTecnica.setObservacao("Agendamento inicial");
+            visitaTecnica.setOcorrencia(ocorrencia);
+            visitaTecnica.setFlagReagendamento(flagReagendamento);
+
+            visitaTecnicaService.salvar(visitaTecnica);
+
+            salvarHistoricoAgendamento(visitaTecnica, 100L, "073.990.740-97", new Date(), "Registro inicial da visita.");
+
+            logger.info("Visita Técnica salva para Funcionário {}, Fazenda {}", matriculaFuncionario, descricaoFazenda);
+
+        } else {
+            logger.warn("Não foi possível salvar VisitaTecnica:  Um ou mais dados não encontrados.");
+        }
+    }
+
+    private void salvarHistoricoAgendamento(VisitaTecnica visitaTecnica, Long codigoOperacao, String loginUsuario, Date dataHoraOperacao, String observacao) {
+        Optional<Operacao> operacaoOptional = operacaoService.buscarPorCodigo(codigoOperacao.intValue()); 
+        Optional<Usuario> usuarioOptional = usuarioService.buscarPorLogin(loginUsuario); 
+ 
+        if (operacaoOptional.isPresent() && usuarioOptional.isPresent()) {
+            HistoricoAgendamentoVisitaTecnica historico = new HistoricoAgendamentoVisitaTecnica();
+            historico.setVisitaTecnica(visitaTecnica);
+            historico.setOperacao(operacaoOptional.get());
+            historico.setUsuario(usuarioOptional.get());
+            historico.setDataHoraOperacao(dataHoraOperacao);
+            historico.setObservacao(observacao);
+
+            historicoAgendamentoVisitaTecnicaService.salvar(historico);
+            logger.info("HistoricoAgendamentoVisitaTecnica salvo para VisitaTecnica ID {}", visitaTecnica.getId());
+        } 
+    }
+
     private void salvarFazendaSeNaoExistir(String descricao, Long matriculaCliente, String endereco, Double latitude, Double longitude, Date dataHoraCadastro, Boolean ativo) {
         Optional<Cliente> clienteOptional = clienteService.buscarPorMatricula(matriculaCliente);
-        
+
         if (clienteOptional.isPresent()) {
-            Fazenda novaFazenda = new Fazenda();
-            novaFazenda.setCliente(clienteOptional.get());
-            novaFazenda.setDescricao(descricao);
-            novaFazenda.setEndereco(endereco);
-            novaFazenda.setLatitude(latitude);
-            novaFazenda.setLongitude(longitude);
-            novaFazenda.setDataHoraCadastro(dataHoraCadastro);
-            novaFazenda.setAtivo(ativo);
-            fazendaService.salvar(novaFazenda);
-            logger.info("Fazenda salva: descrição={}, matriculaCliente={}", descricao, matriculaCliente);
-        }else {
+            Optional<Fazenda> fazendaExistente = fazendaService.findByDescricaoAndClienteMatricula(descricao, matriculaCliente);
+
+            if (fazendaExistente.isEmpty()) { 
+                Fazenda novaFazenda = new Fazenda();
+                novaFazenda.setCliente(clienteOptional.get());
+                novaFazenda.setDescricao(descricao);
+                novaFazenda.setEndereco(endereco);
+                novaFazenda.setLatitude(latitude);
+                novaFazenda.setLongitude(longitude);
+                novaFazenda.setDataHoraCadastro(dataHoraCadastro);
+                novaFazenda.setAtivo(ativo);
+                fazendaService.salvar(novaFazenda);
+                logger.info("Fazenda salva: descrição={}, matriculaCliente={}", descricao, matriculaCliente);
+            }
+        } else {
             logger.warn("Não foi possível salvar a fazenda: Cliente com a matricula {} não encontrado", matriculaCliente);
         }
-  }
-
+    }
 
     private void salvarPerfilSeNaoExistir(Integer codigo, String descricao) {
         Optional<Perfil> perfilOptional = perfilService.buscarPorCodigo(codigo);

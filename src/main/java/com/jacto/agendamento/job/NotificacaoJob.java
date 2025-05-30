@@ -38,6 +38,12 @@ public class NotificacaoJob {
 
         Date inicio = new Date(); // Guarda o tempo de início
         try {
+
+            if (kafkaTemplate == null){
+                logger.error("KafkaTemplate is null. Verify kafka configuration");
+                return;
+            }
+           
             Date now = new Date();
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(now);

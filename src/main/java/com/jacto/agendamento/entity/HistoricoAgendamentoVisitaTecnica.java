@@ -24,12 +24,10 @@ public class HistoricoAgendamentoVisitaTecnica {
     @Column(name = "id")
     private Long id;
 
-    // Relacionamento com VisitaTecnica (id_visita_tecnica)
     @ManyToOne
     @JoinColumn(name = "id_visita_tecnica", referencedColumnName = "id")
     private VisitaTecnica visitaTecnica;
 
-    // Relacionamento com Operacao (codigo_operacao)
     @ManyToOne
     @JoinColumn(name = "codigo_operacao", referencedColumnName = "codigo")
     private Operacao operacao;
