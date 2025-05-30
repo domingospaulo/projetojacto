@@ -1,13 +1,12 @@
 package com.jacto.agendamento.fila;
+
 import java.text.SimpleDateFormat;
 import java.util.Optional;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
-
 import com.jacto.agendamento.entity.Cliente;
 import com.jacto.agendamento.entity.Fazenda;
 import com.jacto.agendamento.entity.Funcionario;

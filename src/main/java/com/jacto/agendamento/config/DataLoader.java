@@ -1,12 +1,21 @@
 package com.jacto.agendamento.config;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.jacto.agendamento.entity.Cargo;
 import com.jacto.agendamento.entity.Cliente;
 import com.jacto.agendamento.entity.Equipamento;
+import com.jacto.agendamento.entity.EquipamentosVisitaTecnica;
 import com.jacto.agendamento.entity.EstoqueEquipamento;
 import com.jacto.agendamento.entity.EstoquePecaReposicao;
 import com.jacto.agendamento.entity.Fazenda;
@@ -15,6 +24,7 @@ import com.jacto.agendamento.entity.HistoricoAgendamentoVisitaTecnica;
 import com.jacto.agendamento.entity.Ocorrencia;
 import com.jacto.agendamento.entity.Operacao;
 import com.jacto.agendamento.entity.PecaReposicao;
+import com.jacto.agendamento.entity.PecasReposicaoVisitaTecnica;
 import com.jacto.agendamento.entity.Perfil;
 import com.jacto.agendamento.entity.Pessoa;
 import com.jacto.agendamento.entity.Prioridade;
@@ -25,6 +35,7 @@ import com.jacto.agendamento.entity.VisitaTecnica;
 import com.jacto.agendamento.service.CargoService;
 import com.jacto.agendamento.service.ClienteService;
 import com.jacto.agendamento.service.EquipamentoService;
+import com.jacto.agendamento.service.EquipamentosVisitaTecnicaService;
 import com.jacto.agendamento.service.EstoqueEquipamentoService;
 import com.jacto.agendamento.service.EstoquePecaReposicaoService;
 import com.jacto.agendamento.service.FazendaService;
@@ -33,6 +44,7 @@ import com.jacto.agendamento.service.HistoricoAgendamentoVisitaTecnicaService;
 import com.jacto.agendamento.service.OcorrenciaService;
 import com.jacto.agendamento.service.OperacaoService;
 import com.jacto.agendamento.service.PecaReposicaoService;
+import com.jacto.agendamento.service.PecasReposicaoVisitaTecnicaService;
 import com.jacto.agendamento.service.PerfilService;
 import com.jacto.agendamento.service.PessoaService;
 import com.jacto.agendamento.service.PrioridadeService;
@@ -40,14 +52,6 @@ import com.jacto.agendamento.service.StatusVisitaService;
 import com.jacto.agendamento.service.TipoServicoService;
 import com.jacto.agendamento.service.UsuarioService;
 import com.jacto.agendamento.service.VisitaTecnicaService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import java.util.Optional;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
-import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class DataLoader implements ApplicationRunner {
@@ -72,6 +76,9 @@ public class DataLoader implements ApplicationRunner {
     @Autowired private FazendaService fazendaService; 
     @Autowired private VisitaTecnicaService visitaTecnicaService; 
     @Autowired private HistoricoAgendamentoVisitaTecnicaService historicoAgendamentoVisitaTecnicaService;
+    @Autowired private EquipamentosVisitaTecnicaService equipamentosVisitaTecnicaService; 
+    @Autowired private PecasReposicaoVisitaTecnicaService pecasReposicaoVisitaTecnicaService;
+
 
     @Override
     @Transactional
@@ -132,8 +139,8 @@ public class DataLoader implements ApplicationRunner {
 
         // Clientes
         salvarClienteSeNaoExistir(101011L, "098.961.300-35");
-       
-       //Estoque de peças de reposição - sera excluido futuramente
+        
+        //Estoque de peças de reposição - sera excluido futuramente
         salvarEstoqueEquipamentoSeNaoExistir(100, 2);
         salvarEstoqueEquipamentoSeNaoExistir(200, 1);
          //Estoque de peças de reposição - sera excluido futuramente
@@ -155,8 +162,24 @@ public class DataLoader implements ApplicationRunner {
              101011L, 200,
              new Date(), true);
 
-        salvarVisitaTecnica(2025002L, "Fazenda Paraiso", new Date(), 15, 30, 100, 100, 100, null, true, true);
- 
+        salvarVisitaTecnica(
+            2025002L, 
+            "Fazenda Paraiso", 
+            new Date(), 
+            15, 
+            30, 
+            100, // código de tipo de serviço
+            100, // código de prioridade
+            100, // código de status de visita
+            null, // código de ocorrência
+            true, // flag reagendamento
+            true, // ativo
+            100, // código do equipamento
+            1,    // quantidade do equipamento
+            100, // código da peça
+            1    // quantidade da peça
+        );
+
         Date now = new Date();
         Calendar calendar = Calendar.getInstance();
         logger.info("now" + now);        
@@ -175,12 +198,15 @@ public class DataLoader implements ApplicationRunner {
         }
     }
 
-    private void salvarVisitaTecnica(Long matriculaFuncionario, String descricaoFazenda, Date dataHoraAgendamento,
-                                      int minutosInicio, int minutosFim, Integer codigoTipoServico, Integer codigoPrioridade,
-                                      Integer codigoStatusVisita, Integer codigoOcorrencia, boolean flagReagendamento,
-                                      boolean ativo) {
+    private void salvarVisitaTecnica(
+        Long matriculaFuncionario, String descricaoFazenda, Date dataHoraAgendamento,
+        int minutosInicio, int minutosFim, Integer codigoTipoServico, Integer codigoPrioridade,
+        Integer codigoStatusVisita, Integer codigoOcorrencia, boolean flagReagendamento,
+        boolean ativo,
+        Integer codigoEquipamento, Integer qtdeEquipamentos,
+        Integer codigoPecaReposicao, Integer qtdePecasReposicao
+    ) {
 
-        // Find the entities based on the provided IDs/descriptions
         Optional<Funcionario> funcionarioOptional = funcionarioService.buscarPorMatricula(matriculaFuncionario);
         Optional<Fazenda> fazendaOptional = fazendaService.findByDescricaoAndClienteMatricula(descricaoFazenda, 101011L);  // Assuming the matriculaCliente is fixed to 101011L (as in your original DataLoader)
 
@@ -226,6 +252,16 @@ public class DataLoader implements ApplicationRunner {
 
             visitaTecnicaService.salvar(visitaTecnica);
 
+            // Salvar equipamentos da visita
+            if (codigoEquipamento != null && qtdeEquipamentos != null) {
+                salvarEquipamentosVisitaTecnica(visitaTecnica, codigoEquipamento, qtdeEquipamentos);
+            }
+
+            // Salvar peças de reposição da visita
+            if (codigoPecaReposicao != null && qtdePecasReposicao != null) {
+                salvarPecasReposicaoVisitaTecnica(visitaTecnica, codigoPecaReposicao, qtdePecasReposicao);
+            }
+
             salvarHistoricoAgendamento(visitaTecnica, 100L, "073.990.740-97", new Date(), "Registro inicial da visita.");
 
             logger.info("Visita Técnica salva para Funcionário {}, Fazenda {}", matriculaFuncionario, descricaoFazenda);
@@ -234,6 +270,37 @@ public class DataLoader implements ApplicationRunner {
             logger.warn("Não foi possível salvar VisitaTecnica:  Um ou mais dados não encontrados.");
         }
     }
+
+    private void salvarEquipamentosVisitaTecnica(VisitaTecnica visita, int codigoEquipamento, int quantidade) {
+        Optional<EstoqueEquipamento> estoqueOptional = estoqueEquipamentoService.buscarPorCodigoEquipamento(codigoEquipamento);
+        if (estoqueOptional.isPresent()) {
+            EstoqueEquipamento equipamentoEstoque = estoqueOptional.get();
+            EquipamentosVisitaTecnica evt = new EquipamentosVisitaTecnica();
+            evt.setVisitaTecnica(visita);
+            evt.setEquipamento(equipamentoEstoque.getEquipamento());
+            evt.setQtde(quantidade);
+            equipamentosVisitaTecnicaService.salvar(evt);
+            logger.info("EquipamentoVisiteTecnica salvo para visita ID {}", visita.getId());
+        } else {
+            logger.warn("Equipamento com código {} não encontrado!", codigoEquipamento);
+        }
+    }
+
+    private void salvarPecasReposicaoVisitaTecnica(VisitaTecnica visita, int codigoPeca, int quantidade) {
+        Optional<EstoquePecaReposicao> estoqueOptional = estoquePecaReposicaoService.buscarPorCodigoPecaReposicao(codigoPeca);
+        if (estoqueOptional.isPresent()) {
+            EstoquePecaReposicao pecaEstoque = estoqueOptional.get();
+            PecasReposicaoVisitaTecnica prvt = new PecasReposicaoVisitaTecnica();
+            prvt.setVisitaTecnica(visita);
+            prvt.setPecaReposicao(pecaEstoque.getPecaReposicao());
+            prvt.setQtde(quantidade);
+            pecasReposicaoVisitaTecnicaService.salvar(prvt);
+            logger.info("PecaReposicaoVisitaTecnica salvo para visita ID {}", visita.getId());
+        } else {
+            logger.warn("PeçaReposição com código {} não encontrada!", codigoPeca);
+        }
+    }
+
 
     private void salvarHistoricoAgendamento(VisitaTecnica visitaTecnica, Long codigoOperacao, String loginUsuario, Date dataHoraOperacao, String observacao) {
         Optional<Operacao> operacaoOptional = operacaoService.buscarPorCodigo(codigoOperacao.intValue()); 
