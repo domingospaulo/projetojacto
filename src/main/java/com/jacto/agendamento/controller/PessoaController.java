@@ -1,6 +1,7 @@
 package com.jacto.agendamento.controller;
 
 import com.jacto.agendamento.controller.dto.PessoaDTO;
+import com.jacto.agendamento.controller.requests.PessoaRequest;
 import com.jacto.agendamento.entity.Pessoa;
 import com.jacto.agendamento.service.PessoaService;
 
@@ -40,20 +41,20 @@ public class PessoaController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
-    public ResponseEntity<PessoaDTO> salvar(@Valid @RequestBody PessoaDTO dto) {
-        Pessoa entity = convertToEntity(dto);
+    public ResponseEntity<PessoaDTO> salvar(@Valid @RequestBody PessoaRequest request) {
+        Pessoa entity = convertToEntity(request);
         Pessoa salvo = service.salvar(entity);
         return ResponseEntity.ok(convertToDto(salvo));
     }
 
     @PutMapping("/{cpfCnpj}")
     @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
-    public ResponseEntity<PessoaDTO> atualizar(@PathVariable String cpfCnpj, @Valid @RequestBody PessoaDTO dto) {
+    public ResponseEntity<PessoaDTO> atualizar(@PathVariable String cpfCnpj, @Valid @RequestBody PessoaRequest request) {
         return service.buscarPorCpfCnpj(cpfCnpj)
             .map(p -> {
-                p.setNome(dto.getNome());
-                p.setEmail(dto.getEmail());
-                p.setTelefone(dto.getTelefone());
+                p.setNome(request.getNome());
+                p.setEmail(request.getEmail());
+                p.setTelefone(request.getTelefone());
                 Pessoa atualizado = service.salvar(p);
                 return ResponseEntity.ok(convertToDto(atualizado));
             })
@@ -80,12 +81,12 @@ public class PessoaController {
         );
     }
 
-    private Pessoa convertToEntity(PessoaDTO dto) {
+    private Pessoa convertToEntity(PessoaRequest request) {
         Pessoa entity = new Pessoa();
-        entity.setCpfCnpj(dto.getCpfCnpj());
-        entity.setNome(dto.getNome());
-        entity.setEmail(dto.getEmail());
-        entity.setTelefone(dto.getTelefone() != null ? dto.getTelefone(): null);
+        entity.setCpfCnpj(request.getCpfCnpj());
+        entity.setNome(request.getNome());
+        entity.setEmail(request.getEmail());
+        entity.setTelefone(request.getTelefone() != null ? request.getTelefone(): null);
         return entity;
     }
 

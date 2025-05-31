@@ -12,7 +12,7 @@ import lombok.AllArgsConstructor;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class EstoquePecaRequest {
+public class EstoquePecaReposicaoRequest {
 
     @NotNull(message = "Código da peça de reposição é obrigatório")
     private Integer codigoPecaReposicao;

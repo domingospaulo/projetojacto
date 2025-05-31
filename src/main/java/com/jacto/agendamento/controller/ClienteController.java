@@ -1,6 +1,7 @@
 package com.jacto.agendamento.controller;
 
 import com.jacto.agendamento.controller.dto.ClienteDTO;
+import com.jacto.agendamento.controller.requests.ClienteRequest;
 import com.jacto.agendamento.entity.Cliente;
 import com.jacto.agendamento.entity.Pessoa;
 import com.jacto.agendamento.service.ClienteService;
@@ -43,18 +44,18 @@ public class ClienteController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
-    public ClienteDTO salvar(@Valid @RequestBody ClienteDTO clienteDTO) {
-        Cliente cliente = convertToEntity(clienteDTO);
+    public ClienteDTO salvar(@Valid @RequestBody ClienteRequest request) {
+        Cliente cliente = convertToEntity(request);
         Cliente salvo = clienteService.salvar(cliente);
         return convertToDto(salvo);
     }
 
     @PutMapping("/{matricula}")
     @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
-    public ResponseEntity<ClienteDTO> atualizar(@PathVariable Long matricula, @Valid @RequestBody ClienteDTO clienteDTO) {
+    public ResponseEntity<ClienteDTO> atualizar(@PathVariable Long matricula, @Valid @RequestBody ClienteRequest request) {
         return clienteService.buscarPorMatricula(matricula)
                 .map(c -> {
-                    Cliente cliente = convertToEntity(clienteDTO);
+                    Cliente cliente = convertToEntity(request);
                     return ResponseEntity.ok(convertToDto(clienteService.salvar(cliente)));
                 })
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -82,23 +83,23 @@ public class ClienteController {
         return dto;
     }
 
-    private Cliente convertToEntity(ClienteDTO dto) {
+    private Cliente convertToEntity(ClienteRequest request) {
         Cliente cliente = new Cliente();
-        cliente.setMatricula(dto.getMatricula());
+        cliente.setMatricula(request.getMatricula());
 
         // Busca a pessoa pelo CPF usando o serviço
-        Optional<Pessoa> pessoaOpt = pessoaService.buscarPorCpfCnpj(dto.getCpfCnpj());
+        Optional<Pessoa> pessoaOpt = pessoaService.buscarPorCpfCnpj(request.getCpfCnpj());
         Pessoa pessoa;
         if (pessoaOpt.isPresent()) {
             pessoa = pessoaOpt.get();
         } else {
             pessoa = new Pessoa();
-            pessoa.setCpfCnpj(dto.getCpfCnpj());
+            pessoa.setCpfCnpj(request.getCpfCnpj());
         }
 
-        pessoa.setEmail(dto.getEmail());
-        pessoa.setTelefone(dto.getTelefone());
-        pessoa.setNome(dto.getNome());
+        pessoa.setEmail(request.getEmail());
+        pessoa.setTelefone(request.getTelefone());
+        pessoa.setNome(request.getNome());
         cliente.setPessoa(pessoa);
 
         return cliente;

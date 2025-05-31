@@ -1,6 +1,7 @@
 package com.jacto.agendamento.controller;
 
 import com.jacto.agendamento.controller.dto.EquipamentoDTO;
+import com.jacto.agendamento.controller.requests.EquipamentoRequest;
 import com.jacto.agendamento.entity.Equipamento;
 import com.jacto.agendamento.service.EquipamentoService;
 
@@ -40,18 +41,18 @@ public class EquipamentoController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
-    public ResponseEntity<EquipamentoDTO> salvar(@Valid @RequestBody EquipamentoDTO dto) {
-        Equipamento entity = convertToEntity(dto);
+    public ResponseEntity<EquipamentoDTO> salvar(@Valid @RequestBody EquipamentoRequest request) {
+        Equipamento entity = convertToEntity(request);
         Equipamento salvo = service.salvar(entity);
         return ResponseEntity.ok(convertToDto(salvo));
     }
 
     @PutMapping("/{codigo}")
     @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
-    public ResponseEntity<EquipamentoDTO> atualizar(@PathVariable Integer codigo, @Valid @RequestBody EquipamentoDTO dto) {
+    public ResponseEntity<EquipamentoDTO> atualizar(@PathVariable Integer codigo, @Valid @RequestBody EquipamentoRequest request) {
         return service.buscarPorCodigo(codigo)
             .map(c -> {
-                c.setDescricao(dto.getDescricao());
+                c.setDescricao(request.getDescricao());
                 Equipamento atualizado = service.salvar(c);
                 return ResponseEntity.ok(convertToDto(atualizado));
             })
@@ -74,10 +75,10 @@ public class EquipamentoController {
     }
 
     // Converte DTO para entidade
-    private Equipamento convertToEntity(EquipamentoDTO dto) {
+    private Equipamento convertToEntity(EquipamentoRequest request) {
         Equipamento entity = new Equipamento();
-        entity.setCodigo(dto.getCodigo());
-        entity.setDescricao(dto.getDescricao());
+        entity.setCodigo(request.getCodigo());
+        entity.setDescricao(request.getDescricao());
         return entity;
     }
 

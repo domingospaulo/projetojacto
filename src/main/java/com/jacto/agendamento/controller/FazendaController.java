@@ -2,6 +2,7 @@ package com.jacto.agendamento.controller;
 
 import com.jacto.agendamento.entity.Fazenda;
 import com.jacto.agendamento.controller.dto.FazendaDTO;
+import com.jacto.agendamento.controller.requests.FazendaRequest;
 import com.jacto.agendamento.entity.Cliente;
 import com.jacto.agendamento.service.FazendaService;
 import com.jacto.agendamento.service.LocalizacaoService;
@@ -61,18 +62,18 @@ public class FazendaController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
-    public ResponseEntity<FazendaDTO> salvar(@Valid @RequestBody FazendaDTO dto) {
-        Fazenda entity = convertToEntity(dto);
+    public ResponseEntity<FazendaDTO> salvar(@Valid @RequestBody FazendaRequest request) {
+        Fazenda entity = convertToEntity(request);
         Fazenda salvo = service.salvar(entity);
         return ResponseEntity.ok(convertToDto(salvo));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
-    public ResponseEntity<FazendaDTO> atualizar(@PathVariable Long id, @Valid @RequestBody FazendaDTO dto) {
+    public ResponseEntity<FazendaDTO> atualizar(@PathVariable Long id, @Valid @RequestBody FazendaRequest request) {
         return service.buscarPorId(id)
             .map(existing -> {
-                Fazenda atualizado = convertToEntity(dto);
+                Fazenda atualizado = convertToEntity(request);
                 atualizado.setId(existing.getId()); // mantém o id
                 Fazenda salvo = service.salvar(atualizado);
                 return ResponseEntity.ok(convertToDto(salvo));
@@ -111,24 +112,20 @@ public class FazendaController {
     }
 
     // Converter DTO para entidade, incluindo busca do cliente
-    private Fazenda convertToEntity(FazendaDTO dto) {
+    private Fazenda convertToEntity(FazendaRequest request) {
         Fazenda entity = new Fazenda();
 
-        if (dto.getId() != null) {
-            entity.setId(dto.getId());
-        }
-
         // Buscar cliente pelo ID de matrícula
-        Cliente cliente = clienteService.buscarPorMatricula(dto.getMatriculaCliente())
-            .orElseThrow(() -> new IllegalArgumentException("Cliente não encontrado para matrícula: " + dto.getMatriculaCliente()));
+        Cliente cliente = clienteService.buscarPorMatricula(request.getMatriculaCliente())
+            .orElseThrow(() -> new IllegalArgumentException("Cliente não encontrado para matrícula: " + request.getMatriculaCliente()));
 
         entity.setCliente(cliente);
-        entity.setDescricao(dto.getDescricao());
-        entity.setEndereco(dto.getEndereco());
-        entity.setLatitude(dto.getLatitude());
-        entity.setLongitude(dto.getLongitude());
-        entity.setDataHoraCadastro(dto.getDataHoraCadastro() != null ? dto.getDataHoraCadastro() : new java.util.Date());
-        entity.setAtivo(dto.getAtivo());
+        entity.setDescricao(request.getDescricao());
+        entity.setEndereco(request.getEndereco());
+        entity.setLatitude(request.getLatitude());
+        entity.setLongitude(request.getLongitude());
+        entity.setDataHoraCadastro(request.getDataHoraCadastro() != null ? request.getDataHoraCadastro() : new java.util.Date());
+        entity.setAtivo(request.getAtivo());
 
         return entity;
     }

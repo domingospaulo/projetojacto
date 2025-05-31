@@ -3,6 +3,7 @@ package com.jacto.agendamento.controller;
 import com.jacto.agendamento.entity.Funcionario;
 import com.jacto.agendamento.entity.Pessoa;
 import com.jacto.agendamento.controller.dto.FuncionarioDTO;
+import com.jacto.agendamento.controller.requests.FuncionarioRequest;
 import com.jacto.agendamento.entity.Cargo;
 import com.jacto.agendamento.service.FuncionarioService;
 import com.jacto.agendamento.service.PessoaService;
@@ -67,18 +68,18 @@ public class FuncionarioController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
-    public ResponseEntity<FuncionarioDTO> salvar(@Valid @RequestBody FuncionarioDTO dto) {
-        Funcionario entity = convertToEntity(dto);
+    public ResponseEntity<FuncionarioDTO> salvar(@Valid @RequestBody FuncionarioRequest request) {
+        Funcionario entity = convertToEntity(request);
         Funcionario salvo = service.salvar(entity);
         return ResponseEntity.ok(convertToDto(salvo));
     }
 
     @PutMapping("/{matricula}")
     @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
-    public ResponseEntity<FuncionarioDTO> atualizar(@PathVariable Long matricula, @Valid @RequestBody FuncionarioDTO dto) {
+    public ResponseEntity<FuncionarioDTO> atualizar(@PathVariable Long matricula, @Valid @RequestBody FuncionarioRequest request) {
         return service.buscarPorMatricula(matricula)
             .map(f -> {
-                Funcionario updated = convertToEntity(dto);
+                Funcionario updated = convertToEntity(request);
                 updated.setMatricula(matricula);
                 Funcionario salvo = service.salvar(updated);
                 return ResponseEntity.ok(convertToDto(salvo));
@@ -114,33 +115,33 @@ public class FuncionarioController {
     }
 
     // Converter DTO para entidade, incluindo busca de cargo
-    private Funcionario convertToEntity(FuncionarioDTO dto) {
+    private Funcionario convertToEntity(FuncionarioRequest request) {
         Funcionario entity = new Funcionario();
 
-        if (dto.getMatricula() != null) {
-            entity.setMatricula(dto.getMatricula());
+        if (request.getMatricula() != null) {
+            entity.setMatricula(request.getMatricula());
         }
 
         // Buscar cargo pelo código enviado
-        Optional<Cargo> cargoOpt = cargoService.buscarPorCodigo(dto.getCodigoCargo());
+        Optional<Cargo> cargoOpt = cargoService.buscarPorCodigo(request.getCodigoCargo());
         if (!cargoOpt.isPresent()) {
-            throw new IllegalArgumentException("Cargo não encontrado com código: " + dto.getCodigoCargo());
+            throw new IllegalArgumentException("Cargo não encontrado com código: " + request.getCodigoCargo());
         }
         entity.setCargo(cargoOpt.get());
 
         // Busca a pessoa pelo CPF usando o serviço
-        Optional<Pessoa> pessoaOpt = pessoaService.buscarPorCpfCnpj(dto.getCpfCnpj());
+        Optional<Pessoa> pessoaOpt = pessoaService.buscarPorCpfCnpj(request.getCpfCnpj());
         Pessoa pessoa;
         if (pessoaOpt.isPresent()) {
             pessoa = pessoaOpt.get();
         } else {
             pessoa = new Pessoa();
-            pessoa.setCpfCnpj(dto.getCpfCnpj());
+            pessoa.setCpfCnpj(request.getCpfCnpj());
         }
 
-        pessoa.setEmail(dto.getEmail());
-        pessoa.setTelefone(dto.getTelefone());
-        pessoa.setNome(dto.getNome());
+        pessoa.setEmail(request.getEmail());
+        pessoa.setTelefone(request.getTelefone());
+        pessoa.setNome(request.getNome());
         entity.setPessoa(pessoa);
 
         return entity;

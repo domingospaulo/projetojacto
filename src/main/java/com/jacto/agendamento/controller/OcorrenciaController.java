@@ -1,6 +1,7 @@
 package com.jacto.agendamento.controller;
 
 import com.jacto.agendamento.controller.dto.OcorrenciaDTO;
+import com.jacto.agendamento.controller.requests.OcorrenciaRequest;
 import com.jacto.agendamento.entity.Ocorrencia;
 import com.jacto.agendamento.service.OcorrenciaService;
 
@@ -40,18 +41,18 @@ public class OcorrenciaController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
-    public ResponseEntity<OcorrenciaDTO> salvar(@Valid @RequestBody OcorrenciaDTO dto) {
-        Ocorrencia entity = convertToEntity(dto);
+    public ResponseEntity<OcorrenciaDTO> salvar(@Valid @RequestBody OcorrenciaRequest request) {
+        Ocorrencia entity = convertToEntity(request);
         Ocorrencia salvo = service.salvar(entity);
         return ResponseEntity.ok(convertToDto(salvo));
     }
 
     @PutMapping("/{codigo}")
     @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
-    public ResponseEntity<OcorrenciaDTO> atualizar(@PathVariable Integer codigo, @Valid @RequestBody OcorrenciaDTO dto) {
+    public ResponseEntity<OcorrenciaDTO> atualizar(@PathVariable Integer codigo, @Valid @RequestBody OcorrenciaRequest request) {
         return service.buscarPorCodigo(codigo)
             .map(c -> {
-                c.setDescricao(dto.getDescricao());
+                c.setDescricao(request.getDescricao());
                 Ocorrencia feitoAtualizar = service.salvar(c);
                 return ResponseEntity.ok(convertToDto(feitoAtualizar));
             })
@@ -74,10 +75,10 @@ public class OcorrenciaController {
     }
 
     // Converter DTO para entidade
-    private Ocorrencia convertToEntity(OcorrenciaDTO dto) {
+    private Ocorrencia convertToEntity(OcorrenciaRequest request) {
         Ocorrencia entity = new Ocorrencia();
-        entity.setCodigo(dto.getCodigo());
-        entity.setDescricao(dto.getDescricao());
+        entity.setCodigo(request.getCodigo());
+        entity.setDescricao(request.getDescricao());
         return entity;
     }
 

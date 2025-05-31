@@ -1,6 +1,7 @@
 package com.jacto.agendamento.controller;
 
 import com.jacto.agendamento.controller.dto.EstoquePecaReposicaoDTO;
+import com.jacto.agendamento.controller.requests.EstoquePecaReposicaoRequest;
 import com.jacto.agendamento.entity.EstoquePecaReposicao;
 import com.jacto.agendamento.service.EstoquePecaReposicaoService;
 import com.jacto.agendamento.service.PecaReposicaoService;
@@ -43,18 +44,18 @@ public class EstoquePecaReposicaoController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
-    public ResponseEntity<EstoquePecaReposicaoDTO> salvar(@Valid @RequestBody EstoquePecaReposicaoDTO dto) {
-        EstoquePecaReposicao entity = convertToEntity(dto);
+    public ResponseEntity<EstoquePecaReposicaoDTO> salvar(@Valid @RequestBody EstoquePecaReposicaoRequest request) {
+        EstoquePecaReposicao entity = convertToEntity(request);
         EstoquePecaReposicao salvo = service.salvar(entity);
         return ResponseEntity.ok(convertToDto(salvo));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
-    public ResponseEntity<EstoquePecaReposicaoDTO> atualizar(@PathVariable Long id, @Valid @RequestBody EstoquePecaReposicaoDTO dto) {
+    public ResponseEntity<EstoquePecaReposicaoDTO> atualizar(@PathVariable Long id, @Valid @RequestBody EstoquePecaReposicaoRequest request) {
         return service.buscarPorId(id)
             .map(e -> {
-                EstoquePecaReposicao updated = convertToEntity(dto);
+                EstoquePecaReposicao updated = convertToEntity(request);
                 updated.setId(e.getId()); // garante o id original
                 EstoquePecaReposicao salvo = service.salvar(updated);
                 return ResponseEntity.ok(convertToDto(salvo));
@@ -82,18 +83,18 @@ public class EstoquePecaReposicaoController {
     }
 
     // Converte DTO para entidade
-    private EstoquePecaReposicao convertToEntity(EstoquePecaReposicaoDTO dto) {
+    private EstoquePecaReposicao convertToEntity(EstoquePecaReposicaoRequest request) {
         EstoquePecaReposicao entity = new EstoquePecaReposicao();
 
         // Buscar a PecaReposicao pelo código
-        pecaService.buscarPorCodigo(dto.getCodigoPecaReposicao())
+        pecaService.buscarPorCodigo(request.getCodigoPecaReposicao())
             .ifPresentOrElse(
                 peca -> entity.setPecaReposicao(peca),
-                () -> { throw new IllegalArgumentException("Peça de reposição não encontrada com código: " + dto.getCodigoPecaReposicao()); }
+                () -> { throw new IllegalArgumentException("Peça de reposição não encontrada com código: " + request.getCodigoPecaReposicao()); }
             );
 
-        entity.setQuantidade(dto.getQuantidade());
-        entity.setValor(dto.getValor());
+        entity.setQuantidade(request.getQuantidade());
+        entity.setValor(request.getValor());
 
         return entity;
     }

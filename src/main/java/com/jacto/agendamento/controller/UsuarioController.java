@@ -1,6 +1,7 @@
 package com.jacto.agendamento.controller;
 
 import com.jacto.agendamento.controller.dto.UsuarioDTO;
+import com.jacto.agendamento.controller.requests.UsuarioRequest;
 import com.jacto.agendamento.entity.Usuario;
 import com.jacto.agendamento.service.UsuarioService;
 import com.jacto.agendamento.service.PerfilService;
@@ -63,28 +64,28 @@ public class UsuarioController {
     // Criar novo usuário
     @PostMapping
     @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
-    public ResponseEntity<UsuarioDTO> salvar(@Valid @RequestBody UsuarioDTO dto) {
+    public ResponseEntity<UsuarioDTO> salvar(@Valid @RequestBody UsuarioRequest request) {
          // Verifica se pelo menos um relacionamentos foi informado
-        if (dto.getMatriculaFuncionario() == null && dto.getMatriculaCliente() == null) {
+        if (request.getMatriculaFuncionario() == null && request.getMatriculaCliente() == null) {
             throw new IllegalArgumentException("É obrigatório informar matricula do cliente ou do funcionário");
         }
        
-        Usuario entity = convertToEntity(dto);
+        Usuario entity = convertToEntity(request);
         Usuario salvo = service.salvar(entity);
         return ResponseEntity.ok(convertToDto(salvo));
     }
 
     @PutMapping("/{login}")
     @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
-    public ResponseEntity<UsuarioDTO> atualizar(@PathVariable String login, @Valid @RequestBody UsuarioDTO dto) {
+    public ResponseEntity<UsuarioDTO> atualizar(@PathVariable String login, @Valid @RequestBody UsuarioRequest request) {
         // Verifica se pelo menos um relacionamentos foi informado
-        if (dto.getMatriculaFuncionario() == null && dto.getMatriculaCliente() == null) {
+        if (request.getMatriculaFuncionario() == null && request.getMatriculaCliente() == null) {
             throw new IllegalArgumentException("É obrigatório informar matricula do cliente ou do funcionário");
         }
 
         return service.buscarPorLogin(login)
             .map(existing -> {
-                Usuario updated = convertToEntity(dto);
+                Usuario updated = convertToEntity(request);
                 updated.setLogin(existing.getLogin()); // mantém o login
                 Usuario salvo = service.salvar(updated);
                 return ResponseEntity.ok(convertToDto(salvo));
@@ -119,35 +120,35 @@ public class UsuarioController {
     }
 
     // Converter DTO para entidade
-    private Usuario convertToEntity(UsuarioDTO dto) {
+    private Usuario convertToEntity(UsuarioRequest request) {
         Usuario usuario = new Usuario();
 
-        if (dto.getLogin() != null)
-            usuario.setLogin(dto.getLogin());
+        if (request.getLogin() != null)
+            usuario.setLogin(request.getLogin());
 
         // Buscar perfil pelo código
-        usuario.setPerfil(perfilService.buscarPorCodigo(dto.getCodigoPerfil())
+        usuario.setPerfil(perfilService.buscarPorCodigo(request.getCodigoPerfil())
             .orElseThrow(() -> new IllegalArgumentException("Perfil não encontrado")));
 
         // Buscar ou criar Funcionario
-        if (dto.getMatriculaFuncionario() != null) {
+        if (request.getMatriculaFuncionario() != null) {
             usuario.setFuncionario(
-                funcionarioService.buscarPorMatricula(dto.getMatriculaFuncionario())
+                funcionarioService.buscarPorMatricula(request.getMatriculaFuncionario())
                 .orElseThrow(() -> new IllegalArgumentException("Funcionário não encontrado"))
             );
         }
 
         // Buscar ou criar Cliente
-        if (dto.getMatriculaCliente() != null) {
+        if (request.getMatriculaCliente() != null) {
             usuario.setCliente(
-                clienteService.buscarPorMatricula(dto.getMatriculaCliente())
+                clienteService.buscarPorMatricula(request.getMatriculaCliente())
                 .orElseThrow(() -> new IllegalArgumentException("Cliente não encontrado"))
             );
         }
 
-        usuario.setSenha(dto.getSenha());
-        usuario.setDataHoraCadastro(dto.getDataHoraCadastro() != null ? dto.getDataHoraCadastro() : new java.util.Date());
-        usuario.setAtivo(dto.getAtivo() != null ? dto.getAtivo() : true);
+        usuario.setSenha(request.getSenha());
+        usuario.setDataHoraCadastro(request.getDataHoraCadastro() != null ? request.getDataHoraCadastro() : new java.util.Date());
+        usuario.setAtivo(request.getAtivo() != null ? request.getAtivo() : true);
 
         return usuario;
     }

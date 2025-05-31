@@ -1,6 +1,7 @@
 package com.jacto.agendamento.controller;
 
 import com.jacto.agendamento.controller.dto.PecaReposicaoDTO;
+import com.jacto.agendamento.controller.requests.PecaReposicaoRequest;
 import com.jacto.agendamento.entity.PecaReposicao;
 import com.jacto.agendamento.service.PecaReposicaoService;
 
@@ -40,18 +41,18 @@ public class PecaReposicaoController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
-    public ResponseEntity<PecaReposicaoDTO> salvar(@Valid @RequestBody PecaReposicaoDTO dto) {
-        PecaReposicao entity = convertToEntity(dto);
+    public ResponseEntity<PecaReposicaoDTO> salvar(@Valid @RequestBody PecaReposicaoRequest request) {
+        PecaReposicao entity = convertToEntity(request);
         PecaReposicao salvo = service.salvar(entity);
         return ResponseEntity.ok(convertToDto(salvo));
     }
 
     @PutMapping("/{codigo}")
     @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
-    public ResponseEntity<PecaReposicaoDTO> atualizar(@PathVariable Integer codigo, @Valid @RequestBody PecaReposicaoDTO dto) {
+    public ResponseEntity<PecaReposicaoDTO> atualizar(@PathVariable Integer codigo, @Valid @RequestBody PecaReposicaoRequest request) {
         return service.buscarPorCodigo(codigo)
             .map(c -> {
-                c.setDescricao(dto.getDescricao());
+                c.setDescricao(request.getDescricao());
                 PecaReposicao atualizado = service.salvar(c);
                 return ResponseEntity.ok(convertToDto(atualizado));
             })
@@ -74,10 +75,10 @@ public class PecaReposicaoController {
     }
 
     // Converter DTO para entidade
-    private PecaReposicao convertToEntity(PecaReposicaoDTO dto) {
+    private PecaReposicao convertToEntity(PecaReposicaoRequest request) {
         PecaReposicao entity = new PecaReposicao();
-        entity.setCodigo(dto.getCodigo());
-        entity.setDescricao(dto.getDescricao());
+        entity.setCodigo(request.getCodigo());
+        entity.setDescricao(request.getDescricao());
         return entity;
     }
 

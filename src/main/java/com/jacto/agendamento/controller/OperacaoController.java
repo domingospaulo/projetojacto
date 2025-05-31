@@ -1,6 +1,7 @@
 package com.jacto.agendamento.controller;
 
 import com.jacto.agendamento.controller.dto.OperacaoDTO;
+import com.jacto.agendamento.controller.requests.OperacaoRequest;
 import com.jacto.agendamento.entity.Operacao;
 import com.jacto.agendamento.service.OperacaoService;
 
@@ -40,18 +41,18 @@ public class OperacaoController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
-    public ResponseEntity<OperacaoDTO> salvar(@Valid @RequestBody OperacaoDTO dto) {
-        Operacao entity = convertToEntity(dto);
+    public ResponseEntity<OperacaoDTO> salvar(@Valid @RequestBody OperacaoRequest request) {
+        Operacao entity = convertToEntity(request);
         Operacao salvo = service.salvar(entity);
         return ResponseEntity.ok(convertToDto(salvo));
     }
 
     @PutMapping("/{codigo}")
     @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
-    public ResponseEntity<OperacaoDTO> atualizar(@PathVariable Integer codigo, @Valid @RequestBody OperacaoDTO dto) {
+    public ResponseEntity<OperacaoDTO> atualizar(@PathVariable Integer codigo, @Valid @RequestBody OperacaoRequest request) {
         return service.buscarPorCodigo(codigo)
             .map(c -> {
-                c.setDescricao(dto.getDescricao());
+                c.setDescricao(request.getDescricao());
                 Operacao atualizado = service.salvar(c);
                 return ResponseEntity.ok(convertToDto(atualizado));
             })
@@ -74,10 +75,10 @@ public class OperacaoController {
     }
 
     // Converter DTO para entidade
-    private Operacao convertToEntity(OperacaoDTO dto) {
+    private Operacao convertToEntity(OperacaoRequest request) {
         Operacao entity = new Operacao();
-        entity.setCodigo(dto.getCodigo());
-        entity.setDescricao(dto.getDescricao());
+        entity.setCodigo(request.getCodigo());
+        entity.setDescricao(request.getDescricao());
         return entity;
     }
 

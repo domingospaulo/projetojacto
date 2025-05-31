@@ -1,6 +1,7 @@
 package com.jacto.agendamento.controller;
 
 import com.jacto.agendamento.controller.dto.PrioridadeDTO;
+import com.jacto.agendamento.controller.requests.PrioridadeRequest;
 import com.jacto.agendamento.entity.Prioridade;
 import com.jacto.agendamento.service.PrioridadeService;
 
@@ -40,18 +41,18 @@ public class PrioridadeController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
-    public ResponseEntity<PrioridadeDTO> salvar(@Valid @RequestBody PrioridadeDTO dto) {
-        Prioridade entity = convertToEntity(dto);
+    public ResponseEntity<PrioridadeDTO> salvar(@Valid @RequestBody PrioridadeRequest request) {
+        Prioridade entity = convertToEntity(request);
         Prioridade salvo = service.salvar(entity);
         return ResponseEntity.ok(convertToDto(salvo));
     }
 
     @PutMapping("/{codigo}")
     @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
-    public ResponseEntity<PrioridadeDTO> atualizar(@PathVariable Integer codigo, @Valid @RequestBody PrioridadeDTO dto) {
+    public ResponseEntity<PrioridadeDTO> atualizar(@PathVariable Integer codigo, @Valid @RequestBody PrioridadeRequest request) {
         return service.buscarPorCodigo(codigo)
             .map(p -> {
-                p.setDescricao(dto.getDescricao());
+                p.setDescricao(request.getDescricao());
                 Prioridade atualizado = service.salvar(p);
                 return ResponseEntity.ok(convertToDto(atualizado));
             })
@@ -72,10 +73,10 @@ public class PrioridadeController {
         return new PrioridadeDTO(entity.getCodigo(), entity.getDescricao());
     }
 
-    private Prioridade convertToEntity(PrioridadeDTO dto) {
+    private Prioridade convertToEntity(PrioridadeRequest request) {
         Prioridade entity = new Prioridade();
-        entity.setCodigo(dto.getCodigo());
-        entity.setDescricao(dto.getDescricao());
+        entity.setCodigo(request.getCodigo());
+        entity.setDescricao(request.getDescricao());
         return entity;
     }
    

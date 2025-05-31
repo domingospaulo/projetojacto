@@ -1,6 +1,7 @@
 package com.jacto.agendamento.controller;
 
 import com.jacto.agendamento.controller.dto.TipoServicoDTO;
+import com.jacto.agendamento.controller.requests.TipoServicoRequest;
 import com.jacto.agendamento.entity.TipoServico;
 import com.jacto.agendamento.service.TipoServicoService;
 
@@ -39,18 +40,18 @@ public class TipoServicoController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
-    public ResponseEntity<TipoServicoDTO> salvar(@Valid @RequestBody TipoServicoDTO dto) {
-        TipoServico entity = convertToEntity(dto);
+    public ResponseEntity<TipoServicoDTO> salvar(@Valid @RequestBody TipoServicoRequest request) {
+        TipoServico entity = convertToEntity(request);
         TipoServico salvo = service.salvar(entity);
         return ResponseEntity.ok(convertToDto(salvo));
     }
 
     @PutMapping("/{codigo}")
     @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
-    public ResponseEntity<TipoServicoDTO> atualizar(@PathVariable Integer codigo, @Valid @RequestBody TipoServicoDTO dto) {
+    public ResponseEntity<TipoServicoDTO> atualizar(@PathVariable Integer codigo, @Valid @RequestBody TipoServicoRequest request) {
         return service.buscarPorCodigo(codigo)
             .map(t -> {
-                t.setDescricao(dto.getDescricao());
+                t.setDescricao(request.getDescricao());
                 TipoServico atualizado = service.salvar(t);
                 return ResponseEntity.ok(convertToDto(atualizado));
             })
@@ -71,10 +72,10 @@ public class TipoServicoController {
         return new TipoServicoDTO(entity.getCodigo(), entity.getDescricao());
     }
 
-    private TipoServico convertToEntity(TipoServicoDTO dto) {
+    private TipoServico convertToEntity(TipoServicoRequest request) {
         TipoServico entity = new TipoServico();
-        entity.setCodigo(dto.getCodigo());
-        entity.setDescricao(dto.getDescricao());
+        entity.setCodigo(request.getCodigo());
+        entity.setDescricao(request.getDescricao());
         return entity;
     }
 

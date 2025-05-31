@@ -1,6 +1,7 @@
 package com.jacto.agendamento.controller;
 
 import com.jacto.agendamento.controller.dto.CargoDTO;
+import com.jacto.agendamento.controller.requests.CargoRequest;
 import com.jacto.agendamento.entity.Cargo;
 import com.jacto.agendamento.service.CargoService;
 
@@ -40,18 +41,18 @@ public class CargoController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
-    public ResponseEntity<CargoDTO> salvar(@Valid @RequestBody CargoDTO dto) {
-        Cargo entity = convertToEntity(dto);
+    public ResponseEntity<CargoDTO> salvar(@Valid @RequestBody CargoRequest request) {
+        Cargo entity = convertToEntity(request);
         Cargo salvo = service.salvar(entity);
         return ResponseEntity.ok(convertToDto(salvo));
     }
 
     @PutMapping("/{codigo}")
     @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
-    public ResponseEntity<CargoDTO> atualizar(@PathVariable Integer codigo, @Valid @RequestBody CargoDTO dto) {
+    public ResponseEntity<CargoDTO> atualizar(@PathVariable Integer codigo, @Valid @RequestBody CargoRequest request) {
         return service.buscarPorCodigo(codigo)
             .map(c -> {
-                c.setDescricao(dto.getDescricao());
+                c.setDescricao(request.getDescricao());
                 Cargo atualizado = service.salvar(c);
                 return ResponseEntity.ok(convertToDto(atualizado));
             })
@@ -74,10 +75,10 @@ public class CargoController {
     }
 
     // Converte DTO p/ entidade
-    private Cargo convertToEntity(CargoDTO dto) {
+    private Cargo convertToEntity(CargoRequest request) {
         Cargo entity = new Cargo();
-        entity.setCodigo(dto.getCodigo());
-        entity.setDescricao(dto.getDescricao());
+        entity.setCodigo(request.getCodigo());
+        entity.setDescricao(request.getDescricao());
         return entity;
     }
 

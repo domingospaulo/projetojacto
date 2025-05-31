@@ -1,6 +1,7 @@
 package com.jacto.agendamento.controller;
 
 import com.jacto.agendamento.controller.dto.StatusVisitaDTO;
+import com.jacto.agendamento.controller.requests.StatusVisitaRequest;
 import com.jacto.agendamento.entity.StatusVisita;
 import com.jacto.agendamento.service.StatusVisitaService;
 
@@ -40,18 +41,18 @@ public class StatusVisitaController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
-    public ResponseEntity<StatusVisitaDTO> salvar(@Valid @RequestBody StatusVisitaDTO dto) {
-        StatusVisita entity = convertToEntity(dto);
+    public ResponseEntity<StatusVisitaDTO> salvar(@Valid @RequestBody StatusVisitaRequest request) {
+        StatusVisita entity = convertToEntity(request);
         StatusVisita salvo = service.salvar(entity);
         return ResponseEntity.ok(convertToDto(salvo));
     }
 
     @PutMapping("/{codigo}")
     @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
-    public ResponseEntity<StatusVisitaDTO> atualizar(@PathVariable Integer codigo, @Valid @RequestBody StatusVisitaDTO dto) {
+    public ResponseEntity<StatusVisitaDTO> atualizar(@PathVariable Integer codigo, @Valid @RequestBody StatusVisitaRequest request) {
         return service.buscarPorCodigo(codigo)
             .map(s -> {
-                s.setDescricao(dto.getDescricao());
+                s.setDescricao(request.getDescricao());
                 StatusVisita atualizado = service.salvar(s);
                 return ResponseEntity.ok(convertToDto(atualizado));
             })
@@ -72,10 +73,10 @@ public class StatusVisitaController {
         return new StatusVisitaDTO(entity.getCodigo(), entity.getDescricao());
     }
 
-    private StatusVisita convertToEntity(StatusVisitaDTO dto) {
+    private StatusVisita convertToEntity(StatusVisitaRequest request) {
         StatusVisita entity = new StatusVisita();
-        entity.setCodigo(dto.getCodigo());
-        entity.setDescricao(dto.getDescricao());
+        entity.setCodigo(request.getCodigo());
+        entity.setDescricao(request.getDescricao());
         return entity;
     }
 }

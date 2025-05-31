@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.jacto.agendamento.controller.dto.EquipamentoVisitaTecnicaDTO;
 import com.jacto.agendamento.controller.dto.PecaReposicaoVisitaTecnicaDTO;
 import com.jacto.agendamento.controller.dto.VisitaTecnicaDTO;
+import com.jacto.agendamento.controller.requests.VisitaTecnicaRequest;
 import com.jacto.agendamento.entity.EquipamentosVisitaTecnica;
 import com.jacto.agendamento.entity.PecasReposicaoVisitaTecnica;
 import com.jacto.agendamento.entity.VisitaTecnica;
@@ -69,18 +70,18 @@ public class VisitaTecnicaController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
-    public ResponseEntity<VisitaTecnicaDTO> criar(@Valid @RequestBody VisitaTecnicaDTO dto) {
+    public ResponseEntity<VisitaTecnicaDTO> criar(@Valid @RequestBody VisitaTecnicaRequest request) {
          // Verifica se pelo menos um relacionamentos foi informado
-        if (dto.getMatriculaFuncionario() == null ) {
+        if (request.getMatriculaFuncionario() == null ) {
             throw new IllegalArgumentException("É obrigatório informar matricula do funcionário");
         }
         
          // Valida a data e hora do agendamento
-        if (dto.getDataHoraVisitaInicioAgendado() != null && dto.getDataHoraVisitaInicioAgendado().before(new Date())) {
+        if (request.getDataHoraVisitaInicioAgendado() != null && request.getDataHoraVisitaInicioAgendado().before(new Date())) {
             throw new IllegalArgumentException("Não é possível agendar a visita para uma data e hora anterior à data e hora atual.");
         }
       
-        VisitaTecnica entity = convertToEntity(dto);
+        VisitaTecnica entity = convertToEntity(request);
         VisitaTecnica salvo = service.salvar(entity);
         return ResponseEntity.ok(convertToDto(salvo));
     }
@@ -88,15 +89,15 @@ public class VisitaTecnicaController {
     // Atualizar uma visita existente
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
-    public ResponseEntity<VisitaTecnicaDTO> atualizar(@PathVariable Long id, @Valid @RequestBody VisitaTecnicaDTO dto) {
+    public ResponseEntity<VisitaTecnicaDTO> atualizar(@PathVariable Long id, @Valid @RequestBody VisitaTecnicaRequest request) {
         return service.buscarPorId(id)
                 .map(existingVisita -> {
                     // Valida a data e hora do agendamento
-                    if (dto.getDataHoraVisitaInicioAgendado() != null && dto.getDataHoraVisitaInicioAgendado().before(new Date())) {
+                    if (request.getDataHoraVisitaInicioAgendado() != null && request.getDataHoraVisitaInicioAgendado().before(new Date())) {
                         throw new IllegalArgumentException("Não é possível agendar a visita para uma data e hora anterior à data e hora atual.");
                     }
 
-                    VisitaTecnica updatedVisita = convertToEntity(dto);
+                    VisitaTecnica updatedVisita = convertToEntity(request);
                     updatedVisita.setId(id); // Garante que o ID seja o mesmo
                     VisitaTecnica savedVisita = service.salvar(updatedVisita);
                     return ResponseEntity.ok(convertToDto(savedVisita));
@@ -224,45 +225,44 @@ public class VisitaTecnicaController {
     }
 
     // Converte DTO para entidade
-    private VisitaTecnica convertToEntity(VisitaTecnicaDTO dto) {
+    private VisitaTecnica convertToEntity(VisitaTecnicaRequest request) {
         VisitaTecnica entity = new VisitaTecnica();
-        entity.setId(dto.getId());
 
         // Busca as entidades relacionadas pelos IDs
-        entity.setFuncionario(funcionarioService.buscarPorMatricula(dto.getMatriculaFuncionario())
-                .orElseThrow(() -> new IllegalArgumentException("Funcionario não encontrado com a matricula: " + dto.getMatriculaFuncionario())));
+        entity.setFuncionario(funcionarioService.buscarPorMatricula(request.getMatriculaFuncionario())
+                .orElseThrow(() -> new IllegalArgumentException("Funcionario não encontrado com a matricula: " + request.getMatriculaFuncionario())));
 
-        entity.setFazenda(fazendaService.buscarPorId(dto.getIdFazenda())
-                .orElseThrow(() -> new IllegalArgumentException("Fazenda não encontrada com o ID: " + dto.getIdFazenda())));
+        entity.setFazenda(fazendaService.buscarPorId(request.getIdFazenda())
+                .orElseThrow(() -> new IllegalArgumentException("Fazenda não encontrada com o ID: " + request.getIdFazenda())));
 
-        entity.setTipoServico(tipoServicoService.buscarPorCodigo(dto.getIdTipoServico())
-                .orElseThrow(() -> new IllegalArgumentException("TipoServico não encontrado com o código: " + dto.getIdTipoServico())));
+        entity.setTipoServico(tipoServicoService.buscarPorCodigo(request.getIdTipoServico())
+                .orElseThrow(() -> new IllegalArgumentException("TipoServico não encontrado com o código: " + request.getIdTipoServico())));
 
-        entity.setPrioridade(prioridadeService.buscarPorCodigo(dto.getIdPrioridade())
-                .orElseThrow(() -> new IllegalArgumentException("Prioridade não encontrada com o código: " + dto.getIdPrioridade())));
+        entity.setPrioridade(prioridadeService.buscarPorCodigo(request.getIdPrioridade())
+                .orElseThrow(() -> new IllegalArgumentException("Prioridade não encontrada com o código: " + request.getIdPrioridade())));
 
-        entity.setStatusVisita(statusVisitaService.buscarPorCodigo(dto.getIdStatusVisita())
-                .orElseThrow(() -> new IllegalArgumentException("StatusVisita não encontrado com o código: " + dto.getIdStatusVisita())));
+        entity.setStatusVisita(statusVisitaService.buscarPorCodigo(request.getIdStatusVisita())
+                .orElseThrow(() -> new IllegalArgumentException("StatusVisita não encontrado com o código: " + request.getIdStatusVisita())));
 
-        entity.setOcorrencia(ocorrenciaService.buscarPorCodigo(dto.getCodigoOcorrencia())
-                .orElseThrow(() -> new IllegalArgumentException("Ocorrencia não encontrada com o código: " + dto.getCodigoOcorrencia())));
+        entity.setOcorrencia(ocorrenciaService.buscarPorCodigo(request.getCodigoOcorrencia())
+                .orElseThrow(() -> new IllegalArgumentException("Ocorrencia não encontrada com o código: " + request.getCodigoOcorrencia())));
 
         //Auto-relacionamento (Visita Técnica)
-        if(dto.getIdVisitaTecnica() != null) {
-             entity.setVisitaRef(service.buscarPorId(dto.getIdVisitaTecnica()).orElse(null));
+        if(request.getIdVisitaTecnica() != null) {
+             entity.setVisitaRef(service.buscarPorId(request.getIdVisitaTecnica()).orElse(null));
         }
 
-        entity.setDataHoraAgendamento(dto.getDataHoraAgendamento());
-        entity.setDataHoraVisitaInicioAgendado(dto.getDataHoraVisitaInicioAgendado());
-        entity.setDataHoraVisitaFimAgendado(dto.getDataHoraVisitaFimAgendado());
-        entity.setDataHoraVisitaInicio(dto.getDataHoraVisitaInicio());
-        entity.setDataHoraVisitaFim(dto.getDataHoraVisitaFim());
-        entity.setObservacao(dto.getObservacao());
-        entity.setFlagReagendamento(dto.getFlagReagendamento());
+        entity.setDataHoraAgendamento(request.getDataHoraAgendamento());
+        entity.setDataHoraVisitaInicioAgendado(request.getDataHoraVisitaInicioAgendado());
+        entity.setDataHoraVisitaFimAgendado(request.getDataHoraVisitaFimAgendado());
+        entity.setDataHoraVisitaInicio(request.getDataHoraVisitaInicio());
+        entity.setDataHoraVisitaFim(request.getDataHoraVisitaFim());
+        entity.setObservacao(request.getObservacao());
+        entity.setFlagReagendamento(request.getFlagReagendamento());
 
-        // Converte EquipamentoVisitaTecnicaDTO para EquipamentoVisitaTecnica
-        if (dto.getEquipamentosVisitaTecnica() != null) {
-            entity.setEquipamentosVisitaTecnica(dto.getEquipamentosVisitaTecnica().stream()
+        // Converte EquipamentoVisitaTecnicarequest para EquipamentoVisitaTecnica
+        if (request.getEquipamentosVisitaTecnica() != null) {
+            entity.setEquipamentosVisitaTecnica(request.getEquipamentosVisitaTecnica().stream()
                 .map(eqDto -> {
                     EquipamentosVisitaTecnica eq = new EquipamentosVisitaTecnica();
                     eq.setEquipamento(equipamentoService.buscarPorCodigo(eqDto.getCodigoEquipamento())
@@ -275,8 +275,8 @@ public class VisitaTecnicaController {
         }
 
          // Converte PecaReposicaoVisitaTecnicaDTO para PecaReposicaoVisitaTecnica
-        if (dto.getPecasReposicaoVisitaTecnica() != null) {
-            entity.setPecasReposicaoVisitaTecnica(dto.getPecasReposicaoVisitaTecnica().stream()
+        if (request.getPecasReposicaoVisitaTecnica() != null) {
+            entity.setPecasReposicaoVisitaTecnica(request.getPecasReposicaoVisitaTecnica().stream()
                 .map(pecaDto -> {
                     PecasReposicaoVisitaTecnica peca = new PecasReposicaoVisitaTecnica();
                     peca.setPecaReposicao(pecaReposicaoService.buscarPorCodigo(pecaDto.getCodigoPecaReposicao())

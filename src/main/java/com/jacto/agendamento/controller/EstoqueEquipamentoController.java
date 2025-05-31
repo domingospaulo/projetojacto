@@ -1,6 +1,7 @@
 package com.jacto.agendamento.controller;
 
 import com.jacto.agendamento.controller.dto.EstoqueEquipamentoDTO;
+import com.jacto.agendamento.controller.requests.EstoqueEquipamentoRequest;
 import com.jacto.agendamento.entity.EstoqueEquipamento;
 import com.jacto.agendamento.service.EstoqueEquipamentoService;
 import com.jacto.agendamento.service.EquipamentoService; // Para buscar equipamento
@@ -52,18 +53,18 @@ public class EstoqueEquipamentoController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
-    public ResponseEntity<EstoqueEquipamentoDTO> salvar(@Valid @RequestBody EstoqueEquipamentoDTO dto) {
-        EstoqueEquipamento entity = convertToEntity(dto);
+    public ResponseEntity<EstoqueEquipamentoDTO> salvar(@Valid @RequestBody EstoqueEquipamentoRequest request) {
+        EstoqueEquipamento entity = convertToEntity(request);
         EstoqueEquipamento salvo = service.salvar(entity);
         return ResponseEntity.ok(convertToDto(salvo));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
-    public ResponseEntity<EstoqueEquipamentoDTO> atualizar(@PathVariable Long id, @Valid @RequestBody EstoqueEquipamentoDTO dto) {
+    public ResponseEntity<EstoqueEquipamentoDTO> atualizar(@PathVariable Long id, @Valid @RequestBody EstoqueEquipamentoRequest request) {
         return service.buscarPorId(id)
             .map(e -> {
-                EstoqueEquipamento updated = convertToEntity(dto);
+                EstoqueEquipamento updated = convertToEntity(request);
                 updated.setId(e.getId()); // garante que a id permanece
                 EstoqueEquipamento salvo = service.salvar(updated);
                 return ResponseEntity.ok(convertToDto(salvo));
@@ -88,17 +89,17 @@ public class EstoqueEquipamentoController {
         );
     }
 
-    private EstoqueEquipamento convertToEntity(EstoqueEquipamentoDTO dto) {
+    private EstoqueEquipamento convertToEntity(EstoqueEquipamentoRequest request) {
         EstoqueEquipamento entity = new EstoqueEquipamento();
 
         // Buscar aEquipment pelo código
-        equipamentoService.buscarPorCodigo(dto.getCodigoEquipamento())
+        equipamentoService.buscarPorCodigo(request.getCodigoEquipamento())
             .ifPresentOrElse(
                 eq -> entity.setEquipamento(eq),
-                () -> { throw new IllegalArgumentException("Equipamento não encontrado com código: " + dto.getCodigoEquipamento()); }
+                () -> { throw new IllegalArgumentException("Equipamento não encontrado com código: " + request.getCodigoEquipamento()); }
             );
 
-        entity.setQuantidade(dto.getQuantidade());
+        entity.setQuantidade(request.getQuantidade());
 
         return entity;
     }

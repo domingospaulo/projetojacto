@@ -1,6 +1,7 @@
 package com.jacto.agendamento.controller;
 
 import com.jacto.agendamento.controller.dto.PerfilDTO;
+import com.jacto.agendamento.controller.requests.PerfilRequest;
 import com.jacto.agendamento.entity.Perfil;
 import com.jacto.agendamento.service.PerfilService;
 
@@ -40,18 +41,18 @@ public class PerfilController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
-    public ResponseEntity<PerfilDTO> salvar(@Valid @RequestBody PerfilDTO dto) {
-        Perfil entity = convertToEntity(dto);
+    public ResponseEntity<PerfilDTO> salvar(@Valid @RequestBody PerfilRequest request) {
+        Perfil entity = convertToEntity(request);
         Perfil salvo = service.salvar(entity);
         return ResponseEntity.ok(convertToDto(salvo));
     }
 
     @PutMapping("/{codigo}")
     @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
-    public ResponseEntity<PerfilDTO> atualizar(@PathVariable Integer codigo, @Valid @RequestBody PerfilDTO dto) {
+    public ResponseEntity<PerfilDTO> atualizar(@PathVariable Integer codigo, @Valid @RequestBody PerfilRequest request) {
         return service.buscarPorCodigo(codigo)
             .map(c -> {
-                c.setDescricao(dto.getDescricao());
+                c.setDescricao(request.getDescricao());
                 Perfil atualizado = service.salvar(c);
                 return ResponseEntity.ok(convertToDto(atualizado));
             })
@@ -74,10 +75,10 @@ public class PerfilController {
     }
 
     // Converter DTO para entidade
-    private Perfil convertToEntity(PerfilDTO dto) {
+    private Perfil convertToEntity(PerfilRequest request) {
         Perfil entity = new Perfil();
-        entity.setCodigo(dto.getCodigo());
-        entity.setDescricao(dto.getDescricao());
+        entity.setCodigo(request.getCodigo());
+        entity.setDescricao(request.getDescricao());
         return entity;
     }
 

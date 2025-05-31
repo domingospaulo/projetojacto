@@ -1,6 +1,7 @@
 package com.jacto.agendamento.controller;
 
-import com.jacto.agendamento.dto.AvaliacaoAtendimentoDTO;
+import com.jacto.agendamento.controller.dto.AvaliacaoAtendimentoDTO;
+import com.jacto.agendamento.controller.requests.AvaliacaoAtendimentoRequest;
 import com.jacto.agendamento.entity.AvaliacaoAtendimento;
 import com.jacto.agendamento.entity.VisitaTecnica;
 import com.jacto.agendamento.service.AvaliacaoAtendimentoService;
@@ -44,8 +45,8 @@ public class AvaliacaoAtendimentoController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('100') or hasAuthority('200') or hasAuthority('300')")
-    public ResponseEntity<AvaliacaoAtendimentoDTO> salvar(@Valid @RequestBody AvaliacaoAtendimentoDTO dto) {
-        AvaliacaoAtendimento entity = convertToEntity(dto);
+    public ResponseEntity<AvaliacaoAtendimentoDTO> salvar(@Valid @RequestBody AvaliacaoAtendimentoRequest request) {
+        AvaliacaoAtendimento entity = convertToEntity(request);
         AvaliacaoAtendimento salvo = service.salvar(entity);
         return ResponseEntity.ok(convertToDto(salvo));
         }
@@ -59,10 +60,10 @@ public class AvaliacaoAtendimentoController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
-    public ResponseEntity<AvaliacaoAtendimentoDTO> atualizar(@PathVariable Long id, @Valid @RequestBody AvaliacaoAtendimentoDTO dto) {
+    public ResponseEntity<AvaliacaoAtendimentoDTO> atualizar(@PathVariable Long id, @Valid @RequestBody AvaliacaoAtendimentoRequest request) {
         return service.buscarPorId(id)
             .map(existing -> {
-                AvaliacaoAtendimento entity = convertToEntity(dto);
+                AvaliacaoAtendimento entity = convertToEntity(request);
                 entity.setId(existing.getId());
                 AvaliacaoAtendimento salvo = service.salvar(entity);
                 return ResponseEntity.ok(convertToDto(salvo));
@@ -95,21 +96,19 @@ public class AvaliacaoAtendimentoController {
     }
 
     // Método de conversão DTO --> entidade
-    private AvaliacaoAtendimento convertToEntity(AvaliacaoAtendimentoDTO dto) {
+    private AvaliacaoAtendimento convertToEntity(AvaliacaoAtendimentoRequest request) {
         AvaliacaoAtendimento entity = new AvaliacaoAtendimento();
-        if (dto.getId() != null) {
-            entity.setId(dto.getId());
-        }
+ 
         // Buscar a visita técnica pelo ID fornecido
-        Optional<VisitaTecnica> visitaOpt = visitaService.buscarPorId(dto.getIdVisitaTecnica());
+        Optional<VisitaTecnica> visitaOpt = visitaService.buscarPorId(request.getIdVisitaTecnica());
         if (!visitaOpt.isPresent()) {
-            throw new IllegalArgumentException("Visita técnica não encontrada para o ID: " + dto.getIdVisitaTecnica());
+            throw new IllegalArgumentException("Visita técnica não encontrada para o ID: " + request.getIdVisitaTecnica());
         }
         entity.setVisita(visitaOpt.get());
 
-        entity.setAvaliacao(dto.getAvaliacao());
-        entity.setObservacao(dto.getObservacao());
-        entity.setDataHoraOperacao(dto.getDataHoraOperacao() != null ? dto.getDataHoraOperacao() : new java.util.Date());
+        entity.setAvaliacao(request.getAvaliacao());
+        entity.setObservacao(request.getObservacao());
+        entity.setDataHoraOperacao(request.getDataHoraOperacao() != null ? request.getDataHoraOperacao() : new java.util.Date());
 
         return entity;
     }
