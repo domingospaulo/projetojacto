@@ -1,6 +1,7 @@
 package com.jacto.agendamento.controller;
 
 import com.jacto.agendamento.controller.dto.ClienteDTO;
+import com.jacto.agendamento.controller.dto.PessoaDTO;
 import com.jacto.agendamento.controller.requests.ClienteRequest;
 import com.jacto.agendamento.entity.Cliente;
 import com.jacto.agendamento.entity.Pessoa;
@@ -71,17 +72,21 @@ public class ClienteController {
         return ResponseEntity.notFound().build();
     }
     
-    private ClienteDTO convertToDto(Cliente cliente) {
-        ClienteDTO dto = new ClienteDTO();
-        dto.setMatricula(cliente.getMatricula());
-        if (cliente.getPessoa() != null) {
-            dto.setCpfCnpj(cliente.getPessoa().getCpfCnpj());
-            dto.setNome(cliente.getPessoa().getNome());
-            dto.setEmail(cliente.getPessoa().getEmail());
-            dto.setTelefone(String.valueOf(cliente.getPessoa().getTelefone()));
-        }
-        return dto;
-    }
+   private ClienteDTO convertToDto(Cliente cliente) {
+       ClienteDTO dto = new ClienteDTO();
+       dto.setMatricula(cliente.getMatricula());
+
+       if (cliente.getPessoa() != null) {
+           PessoaDTO pessoaDTO = new PessoaDTO();
+           pessoaDTO.setCpfCnpj(cliente.getPessoa().getCpfCnpj());
+           pessoaDTO.setNome(cliente.getPessoa().getNome());
+           pessoaDTO.setEmail(cliente.getPessoa().getEmail());
+           pessoaDTO.setTelefone(cliente.getPessoa().getTelefone());
+           dto.setPessoa(pessoaDTO);
+       }
+
+       return dto;
+   }
 
     private Cliente convertToEntity(ClienteRequest request) {
         Cliente cliente = new Cliente();

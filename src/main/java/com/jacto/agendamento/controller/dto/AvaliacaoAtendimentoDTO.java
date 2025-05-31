@@ -20,7 +20,7 @@ public class AvaliacaoAtendimentoDTO {
 
     private String observacao;
 
-    private Long idVisitaTecnica;
+    private VisitaTecnicaDTO visitaTecnicaDTO;
 
     private Date dataHoraOperacao;
 }

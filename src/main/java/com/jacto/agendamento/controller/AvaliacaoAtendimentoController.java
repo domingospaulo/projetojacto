@@ -1,6 +1,13 @@
 package com.jacto.agendamento.controller;
 
 import com.jacto.agendamento.controller.dto.AvaliacaoAtendimentoDTO;
+import com.jacto.agendamento.controller.dto.FazendaDTO;
+import com.jacto.agendamento.controller.dto.FuncionarioDTO;
+import com.jacto.agendamento.controller.dto.OcorrenciaDTO;
+import com.jacto.agendamento.controller.dto.PrioridadeDTO;
+import com.jacto.agendamento.controller.dto.StatusVisitaDTO;
+import com.jacto.agendamento.controller.dto.TipoServicoDTO;
+import com.jacto.agendamento.controller.dto.VisitaTecnicaDTO;
 import com.jacto.agendamento.controller.requests.AvaliacaoAtendimentoRequest;
 import com.jacto.agendamento.entity.AvaliacaoAtendimento;
 import com.jacto.agendamento.entity.VisitaTecnica;
@@ -82,14 +89,50 @@ public class AvaliacaoAtendimentoController {
     }
 
     // Método de conversão entidade --> DTO
-    private AvaliacaoAtendimentoDTO convertToDto(AvaliacaoAtendimento entity) {
+   private AvaliacaoAtendimentoDTO convertToDto(AvaliacaoAtendimento entity) {
         AvaliacaoAtendimentoDTO dto = new AvaliacaoAtendimentoDTO();
         dto.setId(entity.getId());
         dto.setAvaliacao(entity.getAvaliacao());
         dto.setObservacao(entity.getObservacao());
         dto.setDataHoraOperacao(entity.getDataHoraOperacao());
+
         if (entity.getVisita() != null) {
-            dto.setIdVisitaTecnica(entity.getVisita().getId());
+            VisitaTecnicaDTO visitaTecnicaDTO = new VisitaTecnicaDTO();
+            visitaTecnicaDTO.setId(entity.getVisita().getId());
+            if (entity.getVisita().getFuncionario() != null) {
+               FuncionarioDTO dto1 = new FuncionarioDTO();
+               dto1.setMatricula(entity.getVisita().getFuncionario().getMatricula());
+                visitaTecnicaDTO.setFuncionarioDTO(dto1);
+            }
+
+            FazendaDTO fazendaDto = new FazendaDTO();
+            fazendaDto.setId(entity.getVisita().getFazenda().getId());
+            visitaTecnicaDTO.setFazendaDTO(fazendaDto);
+
+            TipoServicoDTO tipoServicoDto = new TipoServicoDTO();
+            tipoServicoDto.setCodigo(entity.getVisita().getTipoServico().getCodigo());
+            visitaTecnicaDTO.setTipoServicoDTO(tipoServicoDto);
+    
+            PrioridadeDTO prioridadeDto = new PrioridadeDTO();
+            prioridadeDto.setCodigo(entity.getVisita().getPrioridade().getCodigo());
+            visitaTecnicaDTO.setPrioridadeDTO(prioridadeDto);
+
+            StatusVisitaDTO statusVisitaDto = new StatusVisitaDTO();
+            statusVisitaDto.setCodigo(entity.getVisita().getStatusVisita().getCodigo());
+            visitaTecnicaDTO.setStatusVisitaDTO(statusVisitaDto);
+
+            OcorrenciaDTO ocorrenciaDto = new OcorrenciaDTO();
+            ocorrenciaDto.setCodigo(entity.getVisita().getOcorrencia().getCodigo());
+            visitaTecnicaDTO.setOcorrenciaDTO(ocorrenciaDto);
+
+            visitaTecnicaDTO.setDataHoraAgendamento(entity.getVisita().getDataHoraAgendamento());
+            visitaTecnicaDTO.setDataHoraVisitaInicioAgendado(entity.getVisita().getDataHoraVisitaInicioAgendado());
+            visitaTecnicaDTO.setDataHoraVisitaFimAgendado(entity.getVisita().getDataHoraVisitaFimAgendado());
+            visitaTecnicaDTO.setDataHoraVisitaInicio(entity.getVisita().getDataHoraVisitaInicio());
+            visitaTecnicaDTO.setDataHoraVisitaFim(entity.getVisita().getDataHoraVisitaFim());
+            visitaTecnicaDTO.setObservacao(entity.getVisita().getObservacao());
+            visitaTecnicaDTO.setFlagReagendamento(entity.getVisita().getFlagReagendamento());
+            dto.setVisitaTecnicaDTO(visitaTecnicaDTO);
         }
 
         return dto;

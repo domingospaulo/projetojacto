@@ -15,21 +15,21 @@ import java.util.List;
 @AllArgsConstructor
 public class VisitaTecnicaDTO {
 
-    private Long id; // opcional, será nulo para criar nova
+    private Long id; 
 
-    private Long matriculaFuncionario;
+    private FuncionarioDTO funcionarioDTO;
 
-    private Long idFazenda;
+    private FazendaDTO fazendaDTO;
 
-    private Integer idTipoServico;
+    private TipoServicoDTO tipoServicoDTO;
 
-    private Integer idPrioridade;
+    private PrioridadeDTO prioridadeDTO;
 
-    private Integer idStatusVisita;
+    private StatusVisitaDTO statusVisitaDTO;
 
-    private Integer codigoOcorrencia;
+    private OcorrenciaDTO ocorrenciaDTO;
 
-    private Long idVisitaTecnica; // auto relacionamento, opcional
+    private VisitaTecnicaDTO visitaTecnicaReferenciaDTO; 
 
     private Date dataHoraAgendamento;
     private Date dataHoraVisitaInicioAgendado;
@@ -44,4 +44,6 @@ public class VisitaTecnicaDTO {
     private List<EquipamentoVisitaTecnicaDTO> equipamentosVisitaTecnica;
 
     private List<PecaReposicaoVisitaTecnicaDTO> pecasReposicaoVisitaTecnica;
+
+    private AvaliacaoAtendimentoDTO avaliacaoAtendimentoDTO;
 }

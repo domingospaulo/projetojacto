@@ -13,7 +13,7 @@ import lombok.ToString;
 @AllArgsConstructor
 public class EquipamentoVisitaTecnicaDTO {
 
-    private Integer codigoEquipamento;
+    private EquipamentoDTO equipamentoDTO;
 
     private Integer qtde;
 }

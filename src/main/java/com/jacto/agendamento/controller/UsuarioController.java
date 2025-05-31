@@ -1,5 +1,10 @@
 package com.jacto.agendamento.controller;
 
+import com.jacto.agendamento.controller.dto.CargoDTO;
+import com.jacto.agendamento.controller.dto.ClienteDTO;
+import com.jacto.agendamento.controller.dto.FuncionarioDTO;
+import com.jacto.agendamento.controller.dto.PerfilDTO;
+import com.jacto.agendamento.controller.dto.PessoaDTO;
 import com.jacto.agendamento.controller.dto.UsuarioDTO;
 import com.jacto.agendamento.controller.requests.UsuarioRequest;
 import com.jacto.agendamento.entity.Usuario;
@@ -103,19 +108,49 @@ public class UsuarioController {
     }
 
 
-    // Converte entidade para DTO
     private UsuarioDTO convertToDto(Usuario usuario) {
         UsuarioDTO dto = new UsuarioDTO();
         dto.setLogin(usuario.getLogin());
-        if (usuario.getPerfil() != null)
-            dto.setCodigoPerfil(usuario.getPerfil().getCodigo());
         dto.setSenha(usuario.getSenha());
         dto.setDataHoraCadastro(usuario.getDataHoraCadastro());
         dto.setAtivo(usuario.getAtivo());
-        if (usuario.getFuncionario() != null)
-            dto.setMatriculaFuncionario(usuario.getFuncionario().getMatricula());
-        if (usuario.getCliente() != null)
-            dto.setMatriculaCliente(usuario.getCliente().getMatricula());
+
+        // Converte Perfil para PerfilDTO
+        if (usuario.getPerfil() != null) {
+            PerfilDTO perfilDTO = new PerfilDTO();
+            perfilDTO.setCodigo(usuario.getPerfil().getCodigo());
+            perfilDTO.setDescricao(usuario.getPerfil().getDescricao());
+            dto.setPerfilDTO(perfilDTO);
+        }
+
+        // Converte Funcionario para FuncionarioDTO
+        if (usuario.getFuncionario() != null) {
+            FuncionarioDTO funcionarioDTO = new FuncionarioDTO();
+            funcionarioDTO.setMatricula(usuario.getFuncionario().getMatricula());
+             //Cria PessoaDto
+            PessoaDTO pessoaDto = new PessoaDTO();
+            pessoaDto.setCpfCnpj(usuario.getFuncionario().getPessoa().getCpfCnpj());
+            pessoaDto.setNome(usuario.getFuncionario().getPessoa().getNome());
+            pessoaDto.setEmail(usuario.getFuncionario().getPessoa().getEmail());
+            funcionarioDTO.setPessoa(pessoaDto);
+            CargoDTO cargoDto = new CargoDTO();
+            cargoDto.setCodigo(usuario.getFuncionario().getCargo().getCodigo());
+            funcionarioDTO.setCargo(cargoDto);
+
+            dto.setFuncionarioDTO(funcionarioDTO);
+        }
+
+        // Converte Cliente para ClienteDTO
+        if (usuario.getCliente() != null) {
+            ClienteDTO clienteDTO = new ClienteDTO();
+            clienteDTO.setMatricula(usuario.getCliente().getMatricula());
+            PessoaDTO pessoaDto = new PessoaDTO();
+            pessoaDto.setCpfCnpj(usuario.getCliente().getPessoa().getCpfCnpj());
+            pessoaDto.setNome(usuario.getCliente().getPessoa().getNome());
+            clienteDTO.setPessoa(pessoaDto);
+            dto.setClienteDTO(clienteDTO);
+        }
+
         return dto;
     }
 

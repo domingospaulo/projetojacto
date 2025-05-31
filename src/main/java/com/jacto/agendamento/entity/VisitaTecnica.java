@@ -91,5 +91,9 @@ public class VisitaTecnica {
     // Relacionamento com PecasReposicaoVisitaTecnica
     @OneToMany(mappedBy = "visitaTecnica", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PecasReposicaoVisitaTecnica> pecasReposicaoVisitaTecnica = new ArrayList<>();
-   
+ 
+    // Relacionamento com AvaliacaoAtendimento
+    @OneToOne(mappedBy = "visita", cascade = CascadeType.ALL, orphanRemoval = true)
+    private AvaliacaoAtendimento avaliacaoAtendimento;
+     
 }

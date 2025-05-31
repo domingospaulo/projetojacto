@@ -1,6 +1,7 @@
 package com.jacto.agendamento.controller;
 
 import com.jacto.agendamento.controller.dto.EstoquePecaReposicaoDTO;
+import com.jacto.agendamento.controller.dto.PecaReposicaoDTO;
 import com.jacto.agendamento.controller.requests.EstoquePecaReposicaoRequest;
 import com.jacto.agendamento.entity.EstoquePecaReposicao;
 import com.jacto.agendamento.service.EstoquePecaReposicaoService;
@@ -75,11 +76,19 @@ public class EstoquePecaReposicaoController {
 
         // Converte entidade para DTO
     private EstoquePecaReposicaoDTO convertToDto(EstoquePecaReposicao entity) {
-        return new EstoquePecaReposicaoDTO(
-            entity.getPecaReposicao().getCodigo(),
-            entity.getQuantidade(),
-            entity.getValor()
-        );
+        EstoquePecaReposicaoDTO dto = new EstoquePecaReposicaoDTO();
+
+        //Cria o DTO de PecaReposicao
+        PecaReposicaoDTO pecaReposicaoDTO = new PecaReposicaoDTO();
+        pecaReposicaoDTO.setCodigo(entity.getPecaReposicao().getCodigo());
+        pecaReposicaoDTO.setDescricao(entity.getPecaReposicao().getDescricao());
+
+        //Seta as informações no DTO principal
+        dto.setPecaReposicaoDTO(pecaReposicaoDTO);
+        dto.setQuantidade(entity.getQuantidade());
+        dto.setValor(entity.getValor());
+
+        return dto;
     }
 
     // Converte DTO para entidade

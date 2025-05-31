@@ -18,8 +18,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.jacto.agendamento.controller.dto.AvaliacaoAtendimentoDTO;
+import com.jacto.agendamento.controller.dto.EquipamentoDTO;
 import com.jacto.agendamento.controller.dto.EquipamentoVisitaTecnicaDTO;
+import com.jacto.agendamento.controller.dto.FazendaDTO;
+import com.jacto.agendamento.controller.dto.FuncionarioDTO;
+import com.jacto.agendamento.controller.dto.OcorrenciaDTO;
+import com.jacto.agendamento.controller.dto.PecaReposicaoDTO;
 import com.jacto.agendamento.controller.dto.PecaReposicaoVisitaTecnicaDTO;
+import com.jacto.agendamento.controller.dto.PrioridadeDTO;
+import com.jacto.agendamento.controller.dto.StatusVisitaDTO;
+import com.jacto.agendamento.controller.dto.TipoServicoDTO;
 import com.jacto.agendamento.controller.dto.VisitaTecnicaDTO;
 import com.jacto.agendamento.controller.requests.VisitaTecnicaRequest;
 import com.jacto.agendamento.entity.EquipamentosVisitaTecnica;
@@ -171,24 +180,59 @@ public class VisitaTecnicaController {
                 .collect(Collectors.toList());
     }
 
-     // Converte entidade para DTO
     private VisitaTecnicaDTO convertToDto(VisitaTecnica entity) {
         VisitaTecnicaDTO dto = new VisitaTecnicaDTO();
         dto.setId(entity.getId());
-        if (entity.getFuncionario() != null)
-            dto.setMatriculaFuncionario(entity.getFuncionario().getMatricula());
-        if (entity.getFazenda() != null)
-            dto.setIdFazenda(entity.getFazenda().getId());
-        if (entity.getTipoServico() != null)
-            dto.setIdTipoServico(entity.getTipoServico().getCodigo());
-        if (entity.getPrioridade() != null)
-            dto.setIdPrioridade(entity.getPrioridade().getCodigo());
-        if (entity.getStatusVisita() != null)
-            dto.setIdStatusVisita(entity.getStatusVisita().getCodigo());
-        if (entity.getOcorrencia() != null)
-            dto.setCodigoOcorrencia(entity.getOcorrencia().getCodigo());
-        if (entity.getVisitaRef() != null)
-            dto.setIdVisitaTecnica(entity.getVisitaRef().getId());
+
+        // Converte Funcionario para FuncionarioDTO
+        if (entity.getFuncionario() != null) {
+            FuncionarioDTO funcionarioDTO = new FuncionarioDTO();
+            funcionarioDTO.setMatricula(entity.getFuncionario().getMatricula());
+            dto.setFuncionarioDTO(funcionarioDTO);
+        }
+
+        // Converte Fazenda para FazendaDTO
+        if (entity.getFazenda() != null) {
+            FazendaDTO fazendaDTO = new FazendaDTO();
+            fazendaDTO.setId(entity.getFazenda().getId());
+            dto.setFazendaDTO(fazendaDTO);
+        }
+
+        // Converte TipoServico para TipoServicoDTO
+        if (entity.getTipoServico() != null) {
+            TipoServicoDTO tipoServicoDTO = new TipoServicoDTO();
+            tipoServicoDTO.setCodigo(entity.getTipoServico().getCodigo());
+            dto.setTipoServicoDTO(tipoServicoDTO);
+        }
+
+        // Converte Prioridade para PrioridadeDTO
+        if (entity.getPrioridade() != null) {
+            PrioridadeDTO prioridadeDTO = new PrioridadeDTO();
+            prioridadeDTO.setCodigo(entity.getPrioridade().getCodigo());
+            dto.setPrioridadeDTO(prioridadeDTO);
+        }
+
+        // Converte StatusVisita para StatusVisitaDTO
+        if (entity.getStatusVisita() != null) {
+            StatusVisitaDTO statusVisitaDTO = new StatusVisitaDTO();
+            statusVisitaDTO.setCodigo(entity.getStatusVisita().getCodigo());
+            dto.setStatusVisitaDTO(statusVisitaDTO);
+        }
+
+        // Converte Ocorrencia para OcorrenciaDTO
+        if (entity.getOcorrencia() != null) {
+            OcorrenciaDTO ocorrenciaDTO = new OcorrenciaDTO();
+            ocorrenciaDTO.setCodigo(entity.getOcorrencia().getCodigo());
+            dto.setOcorrenciaDTO(ocorrenciaDTO);
+        }
+
+        // Converte VisitaTecnica (auto-relacionamento) para VisitaTecnicaDTO
+        if (entity.getVisitaRef() != null) {
+            VisitaTecnicaDTO visitaTecnicaReferenciaDTO = new VisitaTecnicaDTO();
+            visitaTecnicaReferenciaDTO.setId(entity.getVisitaRef().getId());
+            dto.setVisitaTecnicaReferenciaDTO(visitaTecnicaReferenciaDTO);
+        }
+
         dto.setDataHoraAgendamento(entity.getDataHoraAgendamento());
         dto.setDataHoraVisitaInicioAgendado(entity.getDataHoraVisitaInicioAgendado());
         dto.setDataHoraVisitaFimAgendado(entity.getDataHoraVisitaFimAgendado());
@@ -197,12 +241,14 @@ public class VisitaTecnicaController {
         dto.setObservacao(entity.getObservacao());
         dto.setFlagReagendamento(entity.getFlagReagendamento());
 
-        // Converte EquipamentosVisitaTecnica para EquipamentoVisitaTecnicaDTO
+         // Converte EquipamentosVisitaTecnica para EquipamentoVisitaTecnicaDTO
         if (entity.getEquipamentosVisitaTecnica() != null) {
             dto.setEquipamentosVisitaTecnica(entity.getEquipamentosVisitaTecnica().stream()
                 .map(eq -> {
-                    EquipamentoVisitaTecnicaDTO eqDto = new EquipamentoVisitaTecnicaDTO();
-                    eqDto.setCodigoEquipamento(eq.getEquipamento().getCodigo());
+                   EquipamentoVisitaTecnicaDTO eqDto = new EquipamentoVisitaTecnicaDTO();
+                  EquipamentoDTO equipamentoDTO = new EquipamentoDTO();
+                   equipamentoDTO.setCodigo(eq.getEquipamento().getCodigo());
+                    eqDto.setEquipamentoDTO(equipamentoDTO);
                     eqDto.setQtde(eq.getQtde());
                     return eqDto;
                 })
@@ -214,11 +260,23 @@ public class VisitaTecnicaController {
             dto.setPecasReposicaoVisitaTecnica(entity.getPecasReposicaoVisitaTecnica().stream()
                 .map(peca -> {
                     PecaReposicaoVisitaTecnicaDTO pecaDto = new PecaReposicaoVisitaTecnicaDTO();
-                    pecaDto.setCodigoPecaReposicao(peca.getPecaReposicao().getCodigo());
+                     PecaReposicaoDTO pecaReposicaoDTO = new PecaReposicaoDTO();
+                     pecaReposicaoDTO.setCodigo(peca.getPecaReposicao().getCodigo());
+                    pecaDto.setPecaReposicaoDTO(pecaReposicaoDTO);
                     pecaDto.setQtde(peca.getQtde());
                     return pecaDto;
                 })
                 .collect(Collectors.toList()));
+        }
+
+        // Converte AvaliacaoAtendimento para AvaliacaoAtendimentoDTO
+        if (entity.getAvaliacaoAtendimento() != null) {
+            AvaliacaoAtendimentoDTO avaliacaoAtendimentoDTO = new AvaliacaoAtendimentoDTO();
+            avaliacaoAtendimentoDTO.setId(entity.getAvaliacaoAtendimento().getId());
+            avaliacaoAtendimentoDTO.setAvaliacao(entity.getAvaliacaoAtendimento().getAvaliacao());
+            avaliacaoAtendimentoDTO.setObservacao(entity.getAvaliacaoAtendimento().getObservacao());
+            avaliacaoAtendimentoDTO.setDataHoraOperacao(entity.getAvaliacaoAtendimento().getDataHoraOperacao());
+            dto.setAvaliacaoAtendimentoDTO(avaliacaoAtendimentoDTO);
         }
 
         return dto;
@@ -274,7 +332,7 @@ public class VisitaTecnicaController {
                 .collect(Collectors.toList()));
         }
 
-         // Converte PecaReposicaoVisitaTecnicaDTO para PecaReposicaoVisitaTecnica
+        // Converte PecaReposicaoVisitaTecnicaDTO para PecaReposicaoVisitaTecnica
         if (request.getPecasReposicaoVisitaTecnica() != null) {
             entity.setPecasReposicaoVisitaTecnica(request.getPecasReposicaoVisitaTecnica().stream()
                 .map(pecaDto -> {

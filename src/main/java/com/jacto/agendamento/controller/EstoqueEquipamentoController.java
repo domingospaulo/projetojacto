@@ -1,5 +1,6 @@
 package com.jacto.agendamento.controller;
 
+import com.jacto.agendamento.controller.dto.EquipamentoDTO;
 import com.jacto.agendamento.controller.dto.EstoqueEquipamentoDTO;
 import com.jacto.agendamento.controller.requests.EstoqueEquipamentoRequest;
 import com.jacto.agendamento.entity.EstoqueEquipamento;
@@ -83,10 +84,18 @@ public class EstoqueEquipamentoController {
     }
 
     private EstoqueEquipamentoDTO convertToDto(EstoqueEquipamento entity) {
-        return new EstoqueEquipamentoDTO(
-            entity.getEquipamento().getCodigo(),
-            entity.getQuantidade()
-        );
+        EstoqueEquipamentoDTO dto = new EstoqueEquipamentoDTO();
+
+        // Cria o DTO de Equipamento
+        EquipamentoDTO equipamentoDTO = new EquipamentoDTO();
+        equipamentoDTO.setCodigo(entity.getEquipamento().getCodigo());
+        equipamentoDTO.setDescricao(entity.getEquipamento().getDescricao());
+
+        // Seta as informações no DTO principal
+        dto.setEquipamentoDTO(equipamentoDTO);
+        dto.setQuantidade(entity.getQuantidade());
+
+        return dto;
     }
 
     private EstoqueEquipamento convertToEntity(EstoqueEquipamentoRequest request) {

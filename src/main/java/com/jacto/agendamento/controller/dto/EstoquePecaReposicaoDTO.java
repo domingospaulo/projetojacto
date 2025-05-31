@@ -13,7 +13,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class EstoquePecaReposicaoDTO {
 
-    private Integer codigoPecaReposicao;
+    private PecaReposicaoDTO pecaReposicaoDTO;
 
     private Integer quantidade;
 

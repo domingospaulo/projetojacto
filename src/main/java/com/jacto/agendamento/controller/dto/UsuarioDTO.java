@@ -16,13 +16,15 @@ public class UsuarioDTO {
 
     private String login;
 
-    private Integer codigoPerfil;
-
     private String senha;
 
     private Date dataHoraCadastro;
+    
     private Boolean ativo;
 
-    private Long matriculaFuncionario;
-    private Long matriculaCliente;
+    private PerfilDTO perfilDTO;
+
+    private FuncionarioDTO funcionarioDTO;
+
+    private ClienteDTO clienteDTO;
 }

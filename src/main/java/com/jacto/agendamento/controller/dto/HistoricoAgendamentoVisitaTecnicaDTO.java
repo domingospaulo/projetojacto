@@ -13,14 +13,10 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class HistoricoAgendamentoVisitaTecnicaDTO {
-    
-    private Long id;
 
-    private Long idVisitaTecnica;
+    private OperacaoDTO operacaoDTO;
 
-    private Integer codigoOperacao;
-
-    private String loginUsuario;
+    private UsuarioDTO usuarioDTO;
 
     private Date dataHoraOperacao;
 

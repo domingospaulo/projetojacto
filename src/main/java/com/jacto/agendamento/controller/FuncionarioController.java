@@ -2,7 +2,9 @@ package com.jacto.agendamento.controller;
 
 import com.jacto.agendamento.entity.Funcionario;
 import com.jacto.agendamento.entity.Pessoa;
+import com.jacto.agendamento.controller.dto.CargoDTO;
 import com.jacto.agendamento.controller.dto.FuncionarioDTO;
+import com.jacto.agendamento.controller.dto.PessoaDTO;
 import com.jacto.agendamento.controller.requests.FuncionarioRequest;
 import com.jacto.agendamento.entity.Cargo;
 import com.jacto.agendamento.service.FuncionarioService;
@@ -97,19 +99,26 @@ public class FuncionarioController {
         return ResponseEntity.notFound().build();
     }
 
-    // Converter entidade para DTO
     private FuncionarioDTO convertToDto(Funcionario entity) {
         FuncionarioDTO dto = new FuncionarioDTO();
         dto.setMatricula(entity.getMatricula());
+
+        // Converte Pessoa para PessoaDTO
         if (entity.getPessoa() != null) {
-            dto.setCpfCnpj(entity.getPessoa().getCpfCnpj());
-            dto.setNome(entity.getPessoa().getNome());
-            dto.setEmail(entity.getPessoa().getEmail());
-            dto.setTelefone(String.valueOf(entity.getPessoa().getTelefone()));
+            PessoaDTO pessoaDTO = new PessoaDTO();
+            pessoaDTO.setCpfCnpj(entity.getPessoa().getCpfCnpj());
+            pessoaDTO.setNome(entity.getPessoa().getNome());
+            pessoaDTO.setEmail(entity.getPessoa().getEmail());
+            pessoaDTO.setTelefone(entity.getPessoa().getTelefone());
+            dto.setPessoa(pessoaDTO);
         }
 
+        // Converte Cargo para CargoDTO
         if (entity.getCargo() != null) {
-            dto.setCodigoCargo(entity.getCargo().getCodigo());
+            CargoDTO cargoDTO = new CargoDTO();
+            cargoDTO.setCodigo(entity.getCargo().getCodigo());
+            cargoDTO.setDescricao(entity.getCargo().getDescricao());
+            dto.setCargo(cargoDTO);
         }
         return dto;
     }

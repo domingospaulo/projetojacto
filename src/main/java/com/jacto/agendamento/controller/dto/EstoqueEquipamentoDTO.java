@@ -13,7 +13,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class EstoqueEquipamentoDTO {
 
-    private Integer codigoEquipamento;
+    private EquipamentoDTO equipamentoDTO;
 
     private Integer quantidade;
 }
