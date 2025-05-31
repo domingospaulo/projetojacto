@@ -1,6 +1,6 @@
 package com.jacto.agendamento.controller;
 
-import com.jacto.agendamento.dto.StatusVisitaDTO;
+import com.jacto.agendamento.controller.dto.StatusVisitaDTO;
 import com.jacto.agendamento.entity.StatusVisita;
 import com.jacto.agendamento.service.StatusVisitaService;
 

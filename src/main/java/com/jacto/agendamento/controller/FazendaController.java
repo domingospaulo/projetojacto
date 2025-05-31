@@ -1,7 +1,7 @@
 package com.jacto.agendamento.controller;
 
-import com.jacto.agendamento.dto.FazendaDTO;
 import com.jacto.agendamento.entity.Fazenda;
+import com.jacto.agendamento.controller.dto.FazendaDTO;
 import com.jacto.agendamento.entity.Cliente;
 import com.jacto.agendamento.service.FazendaService;
 import com.jacto.agendamento.service.LocalizacaoService;

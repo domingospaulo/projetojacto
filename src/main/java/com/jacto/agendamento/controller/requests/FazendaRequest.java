@@ -1,7 +1,6 @@
-package com.jacto.agendamento.dto;
+package com.jacto.agendamento.controller.requests;
 
 import java.util.Date;
-
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -17,9 +16,7 @@ import lombok.AllArgsConstructor;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class FazendaDTO {
-
-    private Long id;
+public class FazendaRequest {
 
     @NotNull(message = "Matricula do cliente é obrigatória")
     private Long matriculaCliente;

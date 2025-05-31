@@ -1,4 +1,4 @@
-package com.jacto.agendamento.dto;
+package com.jacto.agendamento.controller.requests;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
@@ -14,7 +14,7 @@ import lombok.AllArgsConstructor;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class ClienteDTO {
+public class ClienteRequest {
 
     @NotNull(message = "Matrícula é obrigatória")
     private Long matricula;

@@ -28,7 +28,7 @@ public class NotificacaoJob {
     @Autowired
     private JmsTemplate jmsTemplate;
 
-    @Scheduled(cron = "0 0/3 * * * *") // Executa no minuto 0 e 3 de cada hora
+    @Scheduled(cron = "0 0/5 * * * *") // Executa no minuto 0 e 5 de cada hora
     public void enviarNotificacoesVisitaTecnica() {
         logger.info("Início da execução do job de notificação de visita técnica às {}", dateFormat.format(new Date()));
 
@@ -38,7 +38,7 @@ public class NotificacaoJob {
             Date now = new Date();
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(now);
-            calendar.add(Calendar.MINUTE, 3); // Próximos 3 minutos
+            calendar.add(Calendar.MINUTE, 5); // Próximos 5 minutos
             Date nextHour = calendar.getTime();
 
             List<VisitaTecnica> visitasProximas = visitaTecnicaService.buscarPorDataHoraVisitaInicioAgendadoEntreEFlagReagendamento(now, nextHour, true);

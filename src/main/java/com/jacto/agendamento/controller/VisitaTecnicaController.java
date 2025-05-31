@@ -17,9 +17,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.jacto.agendamento.dto.EquipamentoVisitaTecnicaDTO;
-import com.jacto.agendamento.dto.PecaReposicaoVisitaTecnicaDTO;
-import com.jacto.agendamento.dto.VisitaTecnicaDTO;
+
+import com.jacto.agendamento.controller.dto.EquipamentoVisitaTecnicaDTO;
+import com.jacto.agendamento.controller.dto.PecaReposicaoVisitaTecnicaDTO;
+import com.jacto.agendamento.controller.dto.VisitaTecnicaDTO;
 import com.jacto.agendamento.entity.EquipamentosVisitaTecnica;
 import com.jacto.agendamento.entity.PecasReposicaoVisitaTecnica;
 import com.jacto.agendamento.entity.VisitaTecnica;

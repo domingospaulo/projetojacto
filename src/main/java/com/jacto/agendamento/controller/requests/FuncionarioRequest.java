@@ -1,4 +1,4 @@
-package com.jacto.agendamento.dto;
+package com.jacto.agendamento.controller.requests;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -13,8 +13,8 @@ import lombok.AllArgsConstructor;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class FuncionarioDTO {
-
+public class FuncionarioRequest {
+    @NotNull(message = "Matricula é obrigatório")
     private Long matricula;
 
     @NotNull(message = "Código do cargo é obrigatório")

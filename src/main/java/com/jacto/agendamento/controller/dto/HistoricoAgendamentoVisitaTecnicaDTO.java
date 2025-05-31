@@ -1,6 +1,5 @@
-package com.jacto.agendamento.dto;
+package com.jacto.agendamento.controller.dto;
 
-import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -15,15 +14,12 @@ import java.util.Date;
 @AllArgsConstructor
 public class HistoricoAgendamentoVisitaTecnicaDTO {
     
-    private Long id; // pode ser nulo ao criar
+    private Long id;
 
-    @NotNull(message = "ID da visita técnica é obrigatório")
     private Long idVisitaTecnica;
 
-    @NotNull(message = "Código da operação é obrigatório")
     private Integer codigoOperacao;
 
-    @NotNull(message = "Login do usuário é obrigatório")
     private String loginUsuario;
 
     private Date dataHoraOperacao;

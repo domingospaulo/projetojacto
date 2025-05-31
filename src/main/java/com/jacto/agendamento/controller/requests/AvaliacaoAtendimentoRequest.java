@@ -1,10 +1,8 @@
-package com.jacto.agendamento.dto;
+package com.jacto.agendamento.controller.requests;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Min;
-
 import java.util.Date;
-
 import javax.validation.constraints.Max;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,10 +15,8 @@ import lombok.AllArgsConstructor;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class AvaliacaoAtendimentoDTO {
-
-    private Long id;
-
+public class AvaliacaoAtendimentoRequest {
+    
     @NotNull(message = "Avaliação é obrigatória")
     @Min(value = 1, message = "Avaliação deve ser pelo menos 1")
     @Max(value = 5, message = "Avaliação deve ser no máximo 5")

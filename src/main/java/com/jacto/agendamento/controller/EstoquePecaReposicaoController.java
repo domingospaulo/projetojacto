@@ -1,6 +1,6 @@
 package com.jacto.agendamento.controller;
 
-import com.jacto.agendamento.dto.EstoquePecaReposicaoDTO;
+import com.jacto.agendamento.controller.dto.EstoquePecaReposicaoDTO;
 import com.jacto.agendamento.entity.EstoquePecaReposicao;
 import com.jacto.agendamento.service.EstoquePecaReposicaoService;
 import com.jacto.agendamento.service.PecaReposicaoService;

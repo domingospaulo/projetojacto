@@ -1,6 +1,6 @@
 package com.jacto.agendamento.controller;
 
-import com.jacto.agendamento.dto.PessoaDTO;
+import com.jacto.agendamento.controller.dto.PessoaDTO;
 import com.jacto.agendamento.entity.Pessoa;
 import com.jacto.agendamento.service.PessoaService;
 

@@ -83,7 +83,6 @@ public class DataLoader implements ApplicationRunner {
     @Autowired private EquipamentosVisitaTecnicaService equipamentosVisitaTecnicaService; 
     @Autowired private PecasReposicaoVisitaTecnicaService pecasReposicaoVisitaTecnicaService;
 
-
     @Override
     @Transactional
     public void run(ApplicationArguments args) throws Exception {

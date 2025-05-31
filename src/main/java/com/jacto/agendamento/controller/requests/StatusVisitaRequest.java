@@ -1,4 +1,4 @@
-package com.jacto.agendamento.dto;
+package com.jacto.agendamento.controller.requests;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -13,8 +13,8 @@ import lombok.AllArgsConstructor;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class OperacaoDTO {
-
+public class StatusVisitaRequest {
+    @NotNull(message = "Codigo é obrigatória")
     private Integer codigo;
 
     @NotNull(message = "Descrição é obrigatória")

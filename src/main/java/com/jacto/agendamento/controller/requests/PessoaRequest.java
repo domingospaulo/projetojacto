@@ -1,4 +1,4 @@
-package com.jacto.agendamento.dto;
+package com.jacto.agendamento.controller.requests;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -13,7 +13,7 @@ import lombok.AllArgsConstructor;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class PessoaDTO {
+public class PessoaRequest {
 
     @NotNull(message = "CPF/CNPJ é obrigatório")
     @Size(max = 50, message = "CPF/CNPJ deve ter no máximo 50 caracteres")

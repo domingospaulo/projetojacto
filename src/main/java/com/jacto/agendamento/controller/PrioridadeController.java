@@ -1,6 +1,6 @@
 package com.jacto.agendamento.controller;
 
-import com.jacto.agendamento.dto.PrioridadeDTO;
+import com.jacto.agendamento.controller.dto.PrioridadeDTO;
 import com.jacto.agendamento.entity.Prioridade;
 import com.jacto.agendamento.service.PrioridadeService;
 

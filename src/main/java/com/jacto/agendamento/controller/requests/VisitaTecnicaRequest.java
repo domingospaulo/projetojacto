@@ -1,4 +1,4 @@
-package com.jacto.agendamento.dto;
+package com.jacto.agendamento.controller.requests;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -8,8 +8,6 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
-
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -18,9 +16,7 @@ import java.util.List;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class VisitaTecnicaDTO {
-
-    private Long id; // opcional, será nulo para criar nova
+public class VisitaTecnicaRequest {
 
     @NotNull(message = "Matricula do funcionário é obrigatória")
     private Long matriculaFuncionario;
@@ -54,9 +50,9 @@ public class VisitaTecnicaDTO {
     private Boolean flagReagendamento; 
 
     @Valid // Habilita a validação em cascata
-    private List<EquipamentoVisitaTecnicaDTO> equipamentosVisitaTecnica = new ArrayList<>();
+    private List<EquipamentoVisitaTecnicaRequest> equipamentosVisitaTecnica;
 
     @Valid // Habilita a validação em cascata
-    private List<PecaReposicaoVisitaTecnicaDTO> pecasReposicaoVisitaTecnica = new ArrayList<>();
+    private List<PecaReposicaoVisitaTecnicaRequest> pecasReposicaoVisitaTecnica;
 
 }
