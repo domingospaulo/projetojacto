@@ -7,6 +7,7 @@ import com.jacto.agendamento.service.PecaReposicaoService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -25,6 +26,7 @@ public class EstoquePecaReposicaoController {
     private PecaReposicaoService pecaService;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public List<EstoquePecaReposicaoDTO> listarTodos() {
         return service.listarTodos()
                       .stream()
@@ -33,12 +35,14 @@ public class EstoquePecaReposicaoController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<EstoquePecaReposicaoDTO> buscarPorId(@PathVariable Long id) {
         Optional<EstoquePecaReposicao> opt = service.buscarPorId(id);
         return opt.map(e -> ResponseEntity.ok(convertToDto(e))).orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<EstoquePecaReposicaoDTO> salvar(@Valid @RequestBody EstoquePecaReposicaoDTO dto) {
         EstoquePecaReposicao entity = convertToEntity(dto);
         EstoquePecaReposicao salvo = service.salvar(entity);
@@ -46,6 +50,7 @@ public class EstoquePecaReposicaoController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<EstoquePecaReposicaoDTO> atualizar(@PathVariable Long id, @Valid @RequestBody EstoquePecaReposicaoDTO dto) {
         return service.buscarPorId(id)
             .map(e -> {
@@ -58,6 +63,7 @@ public class EstoquePecaReposicaoController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         if (service.buscarPorId(id).isPresent()) {
             service.deletar(id);

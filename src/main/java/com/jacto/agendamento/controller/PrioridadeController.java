@@ -6,6 +6,7 @@ import com.jacto.agendamento.service.PrioridadeService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -21,6 +22,7 @@ public class PrioridadeController {
     private PrioridadeService service;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public List<PrioridadeDTO> listarTodos() {
         return service.listarTodos()
                       .stream()
@@ -29,6 +31,7 @@ public class PrioridadeController {
     }
 
     @GetMapping("/{codigo}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<PrioridadeDTO> buscarPorCodigo(@PathVariable Integer codigo) {
         Optional<Prioridade> opt = service.buscarPorCodigo(codigo);
         return opt.map(p -> ResponseEntity.ok(convertToDto(p)))
@@ -36,6 +39,7 @@ public class PrioridadeController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<PrioridadeDTO> salvar(@Valid @RequestBody PrioridadeDTO dto) {
         Prioridade entity = convertToEntity(dto);
         Prioridade salvo = service.salvar(entity);
@@ -43,6 +47,7 @@ public class PrioridadeController {
     }
 
     @PutMapping("/{codigo}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<PrioridadeDTO> atualizar(@PathVariable Integer codigo, @Valid @RequestBody PrioridadeDTO dto) {
         return service.buscarPorCodigo(codigo)
             .map(p -> {
@@ -54,6 +59,7 @@ public class PrioridadeController {
     }
 
     @DeleteMapping("/{codigo}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<Void> deletar(@PathVariable Integer codigo) {
         if (service.buscarPorCodigo(codigo).isPresent()) {
             service.deletar(codigo);

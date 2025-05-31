@@ -6,6 +6,7 @@ import com.jacto.agendamento.service.StatusVisitaService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -21,6 +22,7 @@ public class StatusVisitaController {
     private StatusVisitaService service;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public List<StatusVisitaDTO> listarTodos() {
         return service.listarTodos()
                       .stream()
@@ -29,6 +31,7 @@ public class StatusVisitaController {
     }
 
     @GetMapping("/{codigo}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<StatusVisitaDTO> buscarPorCodigo(@PathVariable Integer codigo) {
         Optional<StatusVisita> opt = service.buscarPorCodigo(codigo);
         return opt.map(s -> ResponseEntity.ok(convertToDto(s)))
@@ -36,6 +39,7 @@ public class StatusVisitaController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<StatusVisitaDTO> salvar(@Valid @RequestBody StatusVisitaDTO dto) {
         StatusVisita entity = convertToEntity(dto);
         StatusVisita salvo = service.salvar(entity);
@@ -43,6 +47,7 @@ public class StatusVisitaController {
     }
 
     @PutMapping("/{codigo}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<StatusVisitaDTO> atualizar(@PathVariable Integer codigo, @Valid @RequestBody StatusVisitaDTO dto) {
         return service.buscarPorCodigo(codigo)
             .map(s -> {
@@ -54,6 +59,7 @@ public class StatusVisitaController {
     }
 
     @DeleteMapping("/{codigo}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<Void> deletar(@PathVariable Integer codigo) {
         if (service.buscarPorCodigo(codigo).isPresent()) {
             service.deletar(codigo);

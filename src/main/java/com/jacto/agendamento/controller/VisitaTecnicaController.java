@@ -6,6 +6,9 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,15 +47,18 @@ public class VisitaTecnicaController {
     @Autowired private EquipamentoService equipamentoService;
     @Autowired private PecaReposicaoService pecaReposicaoService;
 
-
     // Listar todos
     @GetMapping
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public List<VisitaTecnicaDTO> listarTodos() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("Authorities: " + auth.getAuthorities());
         return service.listarTodos().stream().map(this::convertToDto).collect(Collectors.toList());
     }
 
     // Buscar por ID
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<VisitaTecnicaDTO> buscarPorId(@PathVariable Long id) {
         return service.buscarPorId(id)
                 .map(this::convertToDto)
@@ -61,6 +67,7 @@ public class VisitaTecnicaController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<VisitaTecnicaDTO> criar(@Valid @RequestBody VisitaTecnicaDTO dto) {
          // Verifica se pelo menos um relacionamentos foi informado
         if (dto.getMatriculaFuncionario() == null ) {
@@ -79,6 +86,7 @@ public class VisitaTecnicaController {
 
     // Atualizar uma visita existente
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<VisitaTecnicaDTO> atualizar(@PathVariable Long id, @Valid @RequestBody VisitaTecnicaDTO dto) {
         return service.buscarPorId(id)
                 .map(existingVisita -> {
@@ -97,6 +105,7 @@ public class VisitaTecnicaController {
 
     // Deletar uma visita
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         if (service.buscarPorId(id).isPresent()) {
             service.deletar(id);
@@ -107,6 +116,7 @@ public class VisitaTecnicaController {
 
     // Métodos de busca por outros parâmetros (opcional)
     @GetMapping("/funcionario/{matriculaFuncionario}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public List<VisitaTecnicaDTO> buscarPorMatriculaFuncionario(@PathVariable Long matriculaFuncionario) {
         return service.buscarPorMatriculaFuncionario(matriculaFuncionario)
                 .stream()
@@ -115,6 +125,7 @@ public class VisitaTecnicaController {
     }
 
     @GetMapping("/fazenda/{idFazenda}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public List<VisitaTecnicaDTO> buscarPorIdFazenda(@PathVariable Long idFazenda) {
         return service.buscarPorIdFazenda(idFazenda)
                 .stream()
@@ -122,7 +133,8 @@ public class VisitaTecnicaController {
                 .collect(Collectors.toList());
     }
 
-   @GetMapping("/tipo-servico/{codigoTipoServico}")
+    @GetMapping("/tipo-servico/{codigoTipoServico}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")   
     public List<VisitaTecnicaDTO> buscarPorCodigoTipoServico(@PathVariable Integer codigoTipoServico) {
         return service.buscarPorCodigoTipoServico(codigoTipoServico)
                 .stream()
@@ -131,6 +143,7 @@ public class VisitaTecnicaController {
     }
 
     @GetMapping("/prioridade/{codigoPrioridade}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public List<VisitaTecnicaDTO> buscarPorCodigoPrioridade(@PathVariable Integer codigoPrioridade) {
         return service.buscarPorCodigoPrioridade(codigoPrioridade)
                 .stream()
@@ -139,6 +152,7 @@ public class VisitaTecnicaController {
     }
 
     @GetMapping("/status-visita/{codigoStatusVisita}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public List<VisitaTecnicaDTO> buscarPorCodigoStatusVisita(@PathVariable Integer codigoStatusVisita) {
         return service.buscarPorCodigoStatusVisita(codigoStatusVisita)
                 .stream()
@@ -147,13 +161,14 @@ public class VisitaTecnicaController {
     }
 
     @GetMapping("/ocorrencia/{codigoOcorrencia}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public List<VisitaTecnicaDTO> buscarPorCodigoOcorrencia(@PathVariable Integer codigoOcorrencia) {
         return service.buscarPorCodigoOcorrencia(codigoOcorrencia)
                 .stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
-    
+
      // Converte entidade para DTO
     private VisitaTecnicaDTO convertToDto(VisitaTecnica entity) {
         VisitaTecnicaDTO dto = new VisitaTecnicaDTO();
@@ -179,7 +194,6 @@ public class VisitaTecnicaController {
         dto.setDataHoraVisitaFim(entity.getDataHoraVisitaFim());
         dto.setObservacao(entity.getObservacao());
         dto.setFlagReagendamento(entity.getFlagReagendamento());
-
 
         // Converte EquipamentosVisitaTecnica para EquipamentoVisitaTecnicaDTO
         if (entity.getEquipamentosVisitaTecnica() != null) {

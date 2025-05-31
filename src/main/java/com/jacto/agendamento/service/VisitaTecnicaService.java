@@ -1,7 +1,6 @@
 package com.jacto.agendamento.service;
 
 import com.jacto.agendamento.entity.VisitaTecnica;
-
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -29,4 +28,6 @@ public interface VisitaTecnicaService {
     List<VisitaTecnica> buscarPorCodigoOcorrencia(Integer codigoOcorrencia);
 
     List<VisitaTecnica> buscarPorDataHoraVisitaInicioAgendadoEntre(Date inicio, Date fim);
+    
+    List<VisitaTecnica> buscarPorDataHoraVisitaInicioAgendadoEntreEFlagReagendamento(Date inicio, Date fim, Boolean flagReagendamento);
 }

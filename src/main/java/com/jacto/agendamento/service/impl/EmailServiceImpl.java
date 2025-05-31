@@ -16,7 +16,7 @@ public class EmailServiceImpl  implements EmailService {
 
     private static final Logger logger = LoggerFactory.getLogger(EmailServiceImpl.class);
 
-    private String remetente = "domingos.paul@gmail.com";
+    private String remetente = "suportejacto@jacto.com";
 
     public void enviarEmail(String para, String assunto, String texto) {
         SimpleMailMessage mensagem = new SimpleMailMessage();

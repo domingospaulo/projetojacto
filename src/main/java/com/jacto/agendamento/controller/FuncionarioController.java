@@ -10,6 +10,7 @@ import com.jacto.agendamento.service.CargoService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -32,6 +33,7 @@ public class FuncionarioController {
     private PessoaService pessoaService;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public List<FuncionarioDTO> listarTodos() {
         return service.listarTodos().stream()
                       .map(this::convertToDto)
@@ -39,6 +41,7 @@ public class FuncionarioController {
     }
 
     @GetMapping("/{matricula}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<FuncionarioDTO> buscarPorMatricula(@PathVariable Long matricula) {
         Optional<Funcionario> opt = service.buscarPorMatricula(matricula);
         return opt.map(f -> ResponseEntity.ok(convertToDto(f)))
@@ -46,6 +49,7 @@ public class FuncionarioController {
     }
 
     @GetMapping("/cargo/{codigoCargo}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public List<FuncionarioDTO> buscarPorCodigoCargo(@PathVariable Integer codigoCargo) {
         return service.buscarPorCodigoCargo(codigoCargo).stream()
                       .map(this::convertToDto)
@@ -53,6 +57,7 @@ public class FuncionarioController {
     }
 
     @GetMapping("/pessoa/{cpfCnpj}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<FuncionarioDTO> buscarPorCpfCnpj(@PathVariable String cpfCnpj) {
         Optional<Funcionario> funcionarioOpt = service.buscarPorCpfCnpj(cpfCnpj);
         return funcionarioOpt
@@ -60,8 +65,8 @@ public class FuncionarioController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-
     @PostMapping
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<FuncionarioDTO> salvar(@Valid @RequestBody FuncionarioDTO dto) {
         Funcionario entity = convertToEntity(dto);
         Funcionario salvo = service.salvar(entity);
@@ -69,6 +74,7 @@ public class FuncionarioController {
     }
 
     @PutMapping("/{matricula}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<FuncionarioDTO> atualizar(@PathVariable Long matricula, @Valid @RequestBody FuncionarioDTO dto) {
         return service.buscarPorMatricula(matricula)
             .map(f -> {
@@ -81,6 +87,7 @@ public class FuncionarioController {
     }
 
     @DeleteMapping("/{matricula}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<Void> deletar(@PathVariable Long matricula) {
         if (service.buscarPorMatricula(matricula).isPresent()) {
             service.deletar(matricula);

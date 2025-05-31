@@ -6,6 +6,7 @@ import com.jacto.agendamento.service.PerfilService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -21,6 +22,7 @@ public class PerfilController {
     private PerfilService service;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public List<PerfilDTO> listarTodos() {
         return service.listarTodos()
                       .stream()
@@ -29,6 +31,7 @@ public class PerfilController {
     }
 
     @GetMapping("/{codigo}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<PerfilDTO> buscarPorCodigo(@PathVariable Integer codigo) {
         Optional<Perfil> opt = service.buscarPorCodigo(codigo);
         return opt.map(c -> ResponseEntity.ok(convertToDto(c)))
@@ -36,6 +39,7 @@ public class PerfilController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<PerfilDTO> salvar(@Valid @RequestBody PerfilDTO dto) {
         Perfil entity = convertToEntity(dto);
         Perfil salvo = service.salvar(entity);
@@ -43,6 +47,7 @@ public class PerfilController {
     }
 
     @PutMapping("/{codigo}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<PerfilDTO> atualizar(@PathVariable Integer codigo, @Valid @RequestBody PerfilDTO dto) {
         return service.buscarPorCodigo(codigo)
             .map(c -> {
@@ -54,6 +59,7 @@ public class PerfilController {
     }
 
     @DeleteMapping("/{codigo}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<Void> deletar(@PathVariable Integer codigo) {
         if (service.buscarPorCodigo(codigo).isPresent()) {
             service.deletar(codigo);

@@ -57,4 +57,8 @@ public class AvaliacaoAtendimentoServiceImpl implements AvaliacaoAtendimentoServ
         return repository.findByDataHoraOperacaoBetween(inicio, fim);
     }
 
+    @Override
+    public List<AvaliacaoAtendimento> buscarPorMatriculaCliente(Long matricula) {
+        return repository.findByVisitaFazendaClienteMatricula(matricula);
+    }
 }

@@ -6,6 +6,7 @@ import com.jacto.agendamento.service.TipoServicoService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -21,6 +22,7 @@ public class TipoServicoController {
     private TipoServicoService service;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public List<TipoServicoDTO> listarTodos() {
         return service.listarTodos()
                       .stream()
@@ -29,12 +31,14 @@ public class TipoServicoController {
     }
 
     @GetMapping("/{codigo}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<TipoServicoDTO> buscarPorCodigo(@PathVariable Integer codigo) {
         Optional<TipoServico> opt = service.buscarPorCodigo(codigo);
         return opt.map(t -> ResponseEntity.ok(convertToDto(t))).orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<TipoServicoDTO> salvar(@Valid @RequestBody TipoServicoDTO dto) {
         TipoServico entity = convertToEntity(dto);
         TipoServico salvo = service.salvar(entity);
@@ -42,6 +46,7 @@ public class TipoServicoController {
     }
 
     @PutMapping("/{codigo}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<TipoServicoDTO> atualizar(@PathVariable Integer codigo, @Valid @RequestBody TipoServicoDTO dto) {
         return service.buscarPorCodigo(codigo)
             .map(t -> {
@@ -53,6 +58,7 @@ public class TipoServicoController {
     }
 
     @DeleteMapping("/{codigo}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<Void> deletar(@PathVariable Integer codigo) {
         if (service.buscarPorCodigo(codigo).isPresent()) {
             service.deletar(codigo);

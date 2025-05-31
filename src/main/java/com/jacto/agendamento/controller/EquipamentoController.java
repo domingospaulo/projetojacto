@@ -6,6 +6,7 @@ import com.jacto.agendamento.service.EquipamentoService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -21,6 +22,7 @@ public class EquipamentoController {
     private EquipamentoService service;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public List<EquipamentoDTO> listarTodos() {
         return service.listarTodos()
                       .stream()
@@ -29,6 +31,7 @@ public class EquipamentoController {
     }
 
     @GetMapping("/{codigo}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<EquipamentoDTO> buscarPorCodigo(@PathVariable Integer codigo) {
         Optional<Equipamento> opt = service.buscarPorCodigo(codigo);
         return opt.map(c -> ResponseEntity.ok(convertToDto(c)))
@@ -36,6 +39,7 @@ public class EquipamentoController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<EquipamentoDTO> salvar(@Valid @RequestBody EquipamentoDTO dto) {
         Equipamento entity = convertToEntity(dto);
         Equipamento salvo = service.salvar(entity);
@@ -43,6 +47,7 @@ public class EquipamentoController {
     }
 
     @PutMapping("/{codigo}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<EquipamentoDTO> atualizar(@PathVariable Integer codigo, @Valid @RequestBody EquipamentoDTO dto) {
         return service.buscarPorCodigo(codigo)
             .map(c -> {
@@ -54,6 +59,7 @@ public class EquipamentoController {
     }
 
     @DeleteMapping("/{codigo}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<Void> deletar(@PathVariable Integer codigo) {
         if (service.buscarPorCodigo(codigo).isPresent()) {
             service.deletar(codigo);

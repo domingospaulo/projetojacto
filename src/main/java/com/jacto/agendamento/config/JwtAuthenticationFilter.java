@@ -1,16 +1,20 @@
 package com.jacto.agendamento.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.util.StringUtils;
-import org.springframework.web.filter.OncePerRequestFilter;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.StringUtils;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -23,13 +27,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String token = obterToken(request);
         if (token != null && jwtService.validateToken(token)) {
-            String username = jwtService.getUsernameFromToken(token);
             String perfil = jwtService.getPerfilFromToken(token);
+            // Converter em authority
+            List<GrantedAuthority> authorities = Arrays.asList(new SimpleGrantedAuthority(perfil));
 
-            //TODO Implementar user details service to load user details
-            UsernamePasswordAuthenticationToken auth = 
-                new UsernamePasswordAuthenticationToken(username, null, null);
-            auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            String username = jwtService.getUsernameFromToken(token);
+            Authentication auth = new UsernamePasswordAuthenticationToken(username, null, authorities);
             SecurityContextHolder.getContext().setAuthentication(auth);
         }
         filterChain.doFilter(request, response);

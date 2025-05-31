@@ -8,6 +8,7 @@ import com.jacto.agendamento.service.VisitaTecnicaService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -26,6 +27,7 @@ public class AvaliacaoAtendimentoController {
     private VisitaTecnicaService visitaService;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public List<AvaliacaoAtendimentoDTO> listarTodos() {
         return service.listarTodos()
                       .stream()
@@ -34,19 +36,29 @@ public class AvaliacaoAtendimentoController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<AvaliacaoAtendimentoDTO> buscarPorId(@PathVariable Long id) {
         Optional<AvaliacaoAtendimento> opt = service.buscarPorId(id);
         return opt.map(e -> ResponseEntity.ok(convertToDto(e))).orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('100') or hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<AvaliacaoAtendimentoDTO> salvar(@Valid @RequestBody AvaliacaoAtendimentoDTO dto) {
         AvaliacaoAtendimento entity = convertToEntity(dto);
         AvaliacaoAtendimento salvo = service.salvar(entity);
         return ResponseEntity.ok(convertToDto(salvo));
         }
 
+    @GetMapping("/cliente/{matricula}")
+    @PreAuthorize("hasAuthority('100') or hasAuthority('200') or hasAuthority('300')")
+    public ResponseEntity<List<AvaliacaoAtendimento>> buscarPorMatriculaCliente(@PathVariable Long matricula) {
+        List<AvaliacaoAtendimento> avaliacoes = service.buscarPorMatriculaCliente(matricula);
+        return ResponseEntity.ok(avaliacoes);
+    }
+
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<AvaliacaoAtendimentoDTO> atualizar(@PathVariable Long id, @Valid @RequestBody AvaliacaoAtendimentoDTO dto) {
         return service.buscarPorId(id)
             .map(existing -> {
@@ -59,6 +71,7 @@ public class AvaliacaoAtendimentoController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         if (service.buscarPorId(id).isPresent()) {
             service.deletar(id);

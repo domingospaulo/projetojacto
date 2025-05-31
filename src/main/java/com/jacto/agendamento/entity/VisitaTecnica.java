@@ -80,11 +80,15 @@ public class VisitaTecnica {
     @Column(name = "flag_reagendamento")
     private Boolean flagReagendamento;
 
+     // Relacionamento com HistoricoAgendamentoVisitaTecnica
+    @OneToMany(mappedBy = "visitaTecnica", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<HistoricoAgendamentoVisitaTecnica> historicoAgendamentoVisitaTecnicas = new ArrayList<>();
+
      // Relacionamento com EquipamentosVisitaTecnica
     @OneToMany(mappedBy = "visitaTecnica", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EquipamentosVisitaTecnica> equipamentosVisitaTecnica = new ArrayList<>();
 
-   // Relacionamento com PecasReposicaoVisitaTecnica
+    // Relacionamento com PecasReposicaoVisitaTecnica
     @OneToMany(mappedBy = "visitaTecnica", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PecasReposicaoVisitaTecnica> pecasReposicaoVisitaTecnica = new ArrayList<>();
    

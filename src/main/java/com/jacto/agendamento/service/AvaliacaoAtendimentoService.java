@@ -27,4 +27,7 @@ public interface AvaliacaoAtendimentoService {
 
     // Buscar avaliações entre duas datas de operação
     List<AvaliacaoAtendimento> buscarPorPeriodoDataOperacao(Date inicio, Date fim);
+
+    // Buscar avaliações pelo matrícula do cliente associado à visita técnica
+    List<AvaliacaoAtendimento> buscarPorMatriculaCliente(Long matricula);
 }

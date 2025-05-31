@@ -28,7 +28,7 @@ public class JMSListeners {
     @Autowired
     private EmailService emailService;
 
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");  // Adicione esta linha
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");  
     
     @JmsListener(destination = "visita-tecnica-queue")
     public void processar(Long visitaId) {

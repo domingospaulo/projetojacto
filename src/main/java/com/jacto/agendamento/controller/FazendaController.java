@@ -8,6 +8,7 @@ import com.jacto.agendamento.service.LocalizacaoService;
 import com.jacto.agendamento.service.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
@@ -28,6 +29,7 @@ public class FazendaController {
     private LocalizacaoService localizacaoService;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public List<FazendaDTO> listarTodos() {
         return service.listarTodos()
                       .stream()
@@ -36,6 +38,7 @@ public class FazendaController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<FazendaDTO> buscarPorId(@PathVariable Long id) {
         Optional<Fazenda> optional = service.buscarPorId(id);
         return optional.map(this::convertToDto)
@@ -44,6 +47,7 @@ public class FazendaController {
     }
 
     @GetMapping("/matricula-cliente/{matriculaCliente}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<List<FazendaDTO>> buscarPorMatriculaCliente(@PathVariable Long matriculaCliente) {
         List<Fazenda> fazendas = service.buscarPorMatriculaCliente(matriculaCliente);
         if (fazendas.isEmpty()) {
@@ -56,6 +60,7 @@ public class FazendaController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<FazendaDTO> salvar(@Valid @RequestBody FazendaDTO dto) {
         Fazenda entity = convertToEntity(dto);
         Fazenda salvo = service.salvar(entity);
@@ -63,6 +68,7 @@ public class FazendaController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<FazendaDTO> atualizar(@PathVariable Long id, @Valid @RequestBody FazendaDTO dto) {
         return service.buscarPorId(id)
             .map(existing -> {
@@ -75,6 +81,7 @@ public class FazendaController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         if (service.buscarPorId(id).isPresent()) {
             service.deletar(id);

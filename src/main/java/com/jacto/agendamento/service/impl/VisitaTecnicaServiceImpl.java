@@ -70,4 +70,9 @@ public class VisitaTecnicaServiceImpl implements VisitaTecnicaService {
     public List<VisitaTecnica> buscarPorDataHoraVisitaInicioAgendadoEntre(Date inicio, Date fim) {
         return repository.findByDataHoraVisitaInicioAgendadoBetween(inicio, fim);
     }
+
+    @Override
+    public List<VisitaTecnica> buscarPorDataHoraVisitaInicioAgendadoEntreEFlagReagendamento(Date inicio, Date fim, Boolean flagReagendamento) {
+        return repository.findByDataHoraVisitaInicioAgendadoBetweenAndFlagReagendamento(inicio, fim, flagReagendamento);
+    }
 }

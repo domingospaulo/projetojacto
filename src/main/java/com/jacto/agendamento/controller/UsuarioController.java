@@ -9,6 +9,7 @@ import com.jacto.agendamento.service.ClienteService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -31,6 +32,7 @@ public class UsuarioController {
 
     // Listar todos
     @GetMapping
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public List<UsuarioDTO> listarTodos() {
         return service.listarTodos()
             .stream()
@@ -40,6 +42,7 @@ public class UsuarioController {
 
     // Buscar por login
     @GetMapping("/{login}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<UsuarioDTO> buscarPorLogin(@PathVariable String login) {
         return service.buscarPorLogin(login)
             .map(this::convertToDto)
@@ -49,6 +52,7 @@ public class UsuarioController {
 
     // Buscar por perfil
     @GetMapping("/perfil/{codigoPerfil}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public List<UsuarioDTO> buscarPorPerfil(@PathVariable Integer codigoPerfil) {
         return service.buscarPorPerfilCodigo(codigoPerfil)
             .stream()
@@ -58,6 +62,7 @@ public class UsuarioController {
 
     // Criar novo usuário
     @PostMapping
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<UsuarioDTO> salvar(@Valid @RequestBody UsuarioDTO dto) {
          // Verifica se pelo menos um relacionamentos foi informado
         if (dto.getMatriculaFuncionario() == null && dto.getMatriculaCliente() == null) {
@@ -70,6 +75,7 @@ public class UsuarioController {
     }
 
     @PutMapping("/{login}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<UsuarioDTO> atualizar(@PathVariable String login, @Valid @RequestBody UsuarioDTO dto) {
         // Verifica se pelo menos um relacionamentos foi informado
         if (dto.getMatriculaFuncionario() == null && dto.getMatriculaCliente() == null) {
@@ -86,7 +92,7 @@ public class UsuarioController {
             .orElse(ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping("/{login}")
+    @DeleteMapping("/{login}")    
     public ResponseEntity<Void> deletar(@PathVariable String login) {
         if (service.buscarPorLogin(login).isPresent()) {
             service.deletar(login);

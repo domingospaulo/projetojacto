@@ -6,6 +6,7 @@ import com.jacto.agendamento.service.OcorrenciaService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -21,6 +22,7 @@ public class OcorrenciaController {
     private OcorrenciaService service;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public List<OcorrenciaDTO> listarTodos() {
         return service.listarTodos()
                       .stream()
@@ -29,6 +31,7 @@ public class OcorrenciaController {
     }
 
     @GetMapping("/{codigo}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<OcorrenciaDTO> buscarPorCodigo(@PathVariable Integer codigo) {
         Optional<Ocorrencia> opt = service.buscarPorCodigo(codigo);
         return opt.map(c -> ResponseEntity.ok(convertToDto(c)))
@@ -36,6 +39,7 @@ public class OcorrenciaController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<OcorrenciaDTO> salvar(@Valid @RequestBody OcorrenciaDTO dto) {
         Ocorrencia entity = convertToEntity(dto);
         Ocorrencia salvo = service.salvar(entity);
@@ -43,6 +47,7 @@ public class OcorrenciaController {
     }
 
     @PutMapping("/{codigo}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<OcorrenciaDTO> atualizar(@PathVariable Integer codigo, @Valid @RequestBody OcorrenciaDTO dto) {
         return service.buscarPorCodigo(codigo)
             .map(c -> {
@@ -54,6 +59,7 @@ public class OcorrenciaController {
     }
 
     @DeleteMapping("/{codigo}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<Void> deletar(@PathVariable Integer codigo) {
         if (service.buscarPorCodigo(codigo).isPresent()) {
             service.deletar(codigo);

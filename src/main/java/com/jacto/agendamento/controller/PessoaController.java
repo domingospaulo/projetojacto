@@ -6,6 +6,7 @@ import com.jacto.agendamento.service.PessoaService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -21,6 +22,7 @@ public class PessoaController {
     private PessoaService service;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public List<PessoaDTO> listarTodos() {
         return service.listarTodos()
                       .stream()
@@ -29,6 +31,7 @@ public class PessoaController {
     }
 
     @GetMapping("/{cpfCnpj}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<PessoaDTO> buscarPorCpfCnpj(@PathVariable String cpfCnpj) {
         Optional<Pessoa> opt = service.buscarPorCpfCnpj(cpfCnpj);
         return opt.map(p -> ResponseEntity.ok(convertToDto(p)))
@@ -36,6 +39,7 @@ public class PessoaController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<PessoaDTO> salvar(@Valid @RequestBody PessoaDTO dto) {
         Pessoa entity = convertToEntity(dto);
         Pessoa salvo = service.salvar(entity);
@@ -43,6 +47,7 @@ public class PessoaController {
     }
 
     @PutMapping("/{cpfCnpj}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<PessoaDTO> atualizar(@PathVariable String cpfCnpj, @Valid @RequestBody PessoaDTO dto) {
         return service.buscarPorCpfCnpj(cpfCnpj)
             .map(p -> {
@@ -56,6 +61,7 @@ public class PessoaController {
     }
 
     @DeleteMapping("/{cpfCnpj}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<Void> deletar(@PathVariable String cpfCnpj) {
         if (service.buscarPorCpfCnpj(cpfCnpj).isPresent()) {
             service.deletar(cpfCnpj);

@@ -24,4 +24,6 @@ public interface AvaliacaoAtendimentoRepository extends JpaRepository<AvaliacaoA
     // Busca a média das avaliações de um funcionário pelo matricula
     @Query("select AVG(a.avaliacao) from AvaliacaoAtendimento a where a.visita.funcionario.matricula = :matricula")
     Double findAverageAvaliacaoByFuncionarioMatricula(@Param("matricula") Long matricula);
+
+    List<AvaliacaoAtendimento> findByVisitaFazendaClienteMatricula(Long matricula);
 }

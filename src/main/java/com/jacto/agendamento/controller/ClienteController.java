@@ -10,6 +10,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,11 +28,13 @@ public class ClienteController {
     private PessoaService pessoaService;
 
     @GetMapping
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public List<ClienteDTO> listarTodos() {
         return clienteService.listarTodos().stream().map(this::convertToDto).collect(Collectors.toList());
     }
 
     @GetMapping("/{matricula}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<ClienteDTO> buscarPorMatricula(@PathVariable Long matricula) {
         Optional<Cliente> cliente = clienteService.buscarPorMatricula(matricula);
         return cliente.map(c -> ResponseEntity.ok(convertToDto(c)))
@@ -39,6 +42,7 @@ public class ClienteController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ClienteDTO salvar(@Valid @RequestBody ClienteDTO clienteDTO) {
         Cliente cliente = convertToEntity(clienteDTO);
         Cliente salvo = clienteService.salvar(cliente);
@@ -46,6 +50,7 @@ public class ClienteController {
     }
 
     @PutMapping("/{matricula}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<ClienteDTO> atualizar(@PathVariable Long matricula, @Valid @RequestBody ClienteDTO clienteDTO) {
         return clienteService.buscarPorMatricula(matricula)
                 .map(c -> {
@@ -56,6 +61,7 @@ public class ClienteController {
     }
 
     @DeleteMapping("/{matricula}")
+    @PreAuthorize("hasAuthority('200') or hasAuthority('300')")
     public ResponseEntity<Void> deletar(@PathVariable Long matricula) {
         if (clienteService.buscarPorMatricula(matricula).isPresent()) {
             clienteService.deletar(matricula);
