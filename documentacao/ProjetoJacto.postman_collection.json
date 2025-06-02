@@ -1,0 +1,390 @@
+{
+	"info": {
+		"_postman_id": "2059cd98-032e-497d-b95b-1d5999f5b80c",
+		"name": "ProjetoJacto",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "15953517",
+		"_collection_link": "https://www.postman.com/sdgepon/workspace/workspace/collection/15953517-2059cd98-032e-497d-b95b-1d5999f5b80c?action=share&source=collection_link&creator=15953517"
+	},
+	"item": [
+		{
+			"name": "cliente",
+			"item": []
+		},
+		{
+			"name": "funcionario",
+			"item": []
+		},
+		{
+			"name": "Login - Funcionario",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Supondo que o token venha no corpo JSON assim: { \"token\": \"xyz...\" }",
+							"var responseJson = pm.response.json();",
+							"",
+							"// Salva na variável global (ou colecione)",
+							"pm.globals.set(\"authToken\", responseJson.token);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \"login\":\"073.990.740-97\",\n   \"senha\":\"123456\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"login"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/login\" -H  \"accept: */*\" -H  \"Content-Type: application/json\" -d \"{  \\\"login\\\": \\\"string\\\",  \\\"senha\\\": \\\"string\\\"}\""
+			},
+			"response": []
+		},
+		{
+			"name": "Login - Cliente",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"// Supondo que o token venha no corpo JSON assim: { \"token\": \"xyz...\" }",
+							"var responseJson = pm.response.json();",
+							"",
+							"// Salva na variável global (ou colecione)",
+							"pm.globals.set(\"authToken\", responseJson.token);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \"login\":\"098.961.300-35\",\n   \"senha\":\"123456\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"login"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/login\" -H  \"accept: */*\" -H  \"Content-Type: application/json\" -d \"{  \\\"login\\\": \\\"string\\\",  \\\"senha\\\": \\\"string\\\"}\""
+			},
+			"response": []
+		},
+		{
+			"name": "Visita Tecnica - Listar Todos",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authToken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/api/visitas",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"visitas"
+					]
+				},
+				"description": "Generated from cURL: curl -X GET \"http://localhost:8080/api/visitas\" -H  \"accept: */*\""
+			},
+			"response": []
+		},
+		{
+			"name": "Visita Tecnica - Salvar",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \"codigoOcorrencia\":0,\n   \"dataHoraAgendamento\":\"2025-05-30T21:09:28.982Z\",\n   \"dataHoraVisitaFim\":\"2025-05-30T21:09:28.982Z\",\n   \"dataHoraVisitaFimAgendado\":\"2025-05-30T21:09:28.982Z\",\n   \"dataHoraVisitaInicio\":\"2025-05-30T21:09:28.982Z\",\n   \"dataHoraVisitaInicioAgendado\":\"2025-05-30T21:09:28.982Z\",\n   \"equipamentosVisitaTecnica\":[\n      {\n         \"codigoEquipamento\":0,\n         \"qtde\":0\n      }\n   ],\n   \"flagReagendamento\":true,\n   \"id\":0,\n   \"idFazenda\":0,\n   \"idPrioridade\":0,\n   \"idStatusVisita\":0,\n   \"idTipoServico\":0,\n   \"idVisitaTecnica\":0,\n   \"matriculaFuncionario\":0,\n   \"observacao\":\"string\",\n   \"pecasReposicaoVisitaTecnica\":[\n      {\n         \"codigoPecaReposicao\":0,\n         \"qtde\":0\n      }\n   ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/visitas",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"visitas"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/api/visitas\" -H  \"accept: */*\" -H  \"Content-Type: application/json\" -d \"{  \\\"codigoOcorrencia\\\": 0,  \\\"dataHoraAgendamento\\\": \\\"2025-05-30T21:09:28.982Z\\\",  \\\"dataHoraVisitaFim\\\": \\\"2025-05-30T21:09:28.982Z\\\",  \\\"dataHoraVisitaFimAgendado\\\": \\\"2025-05-30T21:09:28.982Z\\\",  \\\"dataHoraVisitaInicio\\\": \\\"2025-05-30T21:09:28.982Z\\\",  \\\"dataHoraVisitaInicioAgendado\\\": \\\"2025-05-30T21:09:28.982Z\\\",  \\\"equipamentosVisitaTecnica\\\": [    {      \\\"codigoEquipamento\\\": 0,      \\\"qtde\\\": 0    }  ],  \\\"flagReagendamento\\\": true,  \\\"id\\\": 0,  \\\"idFazenda\\\": 0,  \\\"idPrioridade\\\": 0,  \\\"idStatusVisita\\\": 0,  \\\"idTipoServico\\\": 0,  \\\"idVisitaTecnica\\\": 0,  \\\"matriculaFuncionario\\\": 0,  \\\"observacao\\\": \\\"string\\\",  \\\"pecasReposicaoVisitaTecnica\\\": [    {      \\\"codigoPecaReposicao\\\": 0,      \\\"qtde\\\": 0    }  ]}\""
+			},
+			"response": []
+		},
+		{
+			"name": "Visita Tecnica - Atualizar",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \"codigoOcorrencia\":0,\n   \"dataHoraAgendamento\":\"2025-05-30T19:39:19.588Z\",\n   \"dataHoraVisitaFim\":\"2025-05-30T19:39:19.588Z\",\n   \"dataHoraVisitaFimAgendado\":\"2025-05-30T19:39:19.588Z\",\n   \"dataHoraVisitaInicio\":\"2025-05-30T19:39:19.588Z\",\n   \"dataHoraVisitaInicioAgendado\":\"2025-05-30T19:39:19.588Z\",\n   \"equipamentosVisitaTecnica\":[\n      {\n         \"codigoEquipamento\":0,\n         \"qtde\":0\n      }\n   ],\n   \"flagReagendamento\":true,\n   \"id\":0,\n   \"idFazenda\":0,\n   \"idPrioridade\":0,\n   \"idStatusVisita\":0,\n   \"idTipoServico\":0,\n   \"idVisitaTecnica\":0,\n   \"matriculaFuncionario\":0,\n   \"observacao\":\"string\",\n   \"pecasReposicaoVisitaTecnica\":[\n      {\n         \"codigoPecaReposicao\":0,\n         \"qtde\":0\n      }\n   ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/visitas/10",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"visitas",
+						"10"
+					]
+				},
+				"description": "Generated from cURL: curl -X PUT \"http://localhost:8080/api/visitas/10\" -H  \"accept: */*\" -H  \"Content-Type: application/json\" -d \"{  \\\"codigoOcorrencia\\\": 0,  \\\"dataHoraAgendamento\\\": \\\"2025-05-30T19:39:19.588Z\\\",  \\\"dataHoraVisitaFim\\\": \\\"2025-05-30T19:39:19.588Z\\\",  \\\"dataHoraVisitaFimAgendado\\\": \\\"2025-05-30T19:39:19.588Z\\\",  \\\"dataHoraVisitaInicio\\\": \\\"2025-05-30T19:39:19.588Z\\\",  \\\"dataHoraVisitaInicioAgendado\\\": \\\"2025-05-30T19:39:19.588Z\\\",  \\\"equipamentosVisitaTecnica\\\": [    {      \\\"codigoEquipamento\\\": 0,      \\\"qtde\\\": 0    }  ],  \\\"flagReagendamento\\\": true,  \\\"id\\\": 0,  \\\"idFazenda\\\": 0,  \\\"idPrioridade\\\": 0,  \\\"idStatusVisita\\\": 0,  \\\"idTipoServico\\\": 0,  \\\"idVisitaTecnica\\\": 0,  \\\"matriculaFuncionario\\\": 0,  \\\"observacao\\\": \\\"string\\\",  \\\"pecasReposicaoVisitaTecnica\\\": [    {      \\\"codigoPecaReposicao\\\": 0,      \\\"qtde\\\": 0    }  ]}\""
+			},
+			"response": []
+		},
+		{
+			"name": "Visita Tecnica - Excluir",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authToken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/api/visitas/39",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"visitas",
+						"39"
+					]
+				},
+				"description": "Generated from cURL: curl -X DELETE \"http://localhost:8080/api/visitas/2\" -H  \"accept: */*\""
+			},
+			"response": []
+		},
+		{
+			"name": "Avaliacao - Listar Todos",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authToken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/api/avaliacoes",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"avaliacoes"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/api/avaliacoes\" -H  \"accept: */*\" -H  \"Content-Type: application/json\" -d \"{  \\\"avaliacao\\\": 0,  \\\"dataHoraOperacao\\\": \\\"2025-05-30T20:02:27.454Z\\\",  \\\"id\\\": 0,  \\\"idVisitaTecnica\\\": 0,  \\\"observacao\\\": \\\"string\\\"}\""
+			},
+			"response": []
+		},
+		{
+			"name": "Avaliacao - Salvar (Cliente)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n   \"avaliacao\":0,\n   \"dataHoraOperacao\":\"2025-05-30T20:02:27.454Z\",\n   \"id\":0,\n   \"idVisitaTecnica\":0,\n   \"observacao\":\"string\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/avaliacoes",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"avaliacoes"
+					]
+				},
+				"description": "Generated from cURL: curl -X POST \"http://localhost:8080/api/avaliacoes\" -H  \"accept: */*\" -H  \"Content-Type: application/json\" -d \"{  \\\"avaliacao\\\": 0,  \\\"dataHoraOperacao\\\": \\\"2025-05-30T20:02:27.454Z\\\",  \\\"id\\\": 0,  \\\"idVisitaTecnica\\\": 0,  \\\"observacao\\\": \\\"string\\\"}\""
+			},
+			"response": []
+		},
+		{
+			"name": "Avaliacao - Listar Todos (Cliente)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "accept",
+						"value": "*/*"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{authToken}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/api/avaliacoes/cliente/101011",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"avaliacoes",
+						"cliente",
+						"101011"
+					]
+				},
+				"description": "Generated from cURL: curl -X GET \"http://localhost:8080/api/avaliacoes/cliente/1111\" -H  \"accept: */*\""
+			},
+			"response": []
+		}
+	]
+}
